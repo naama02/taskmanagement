@@ -31,7 +31,7 @@
                 <div class="col-lg-4  bg-white">
                     <div class="row align-items-center m-h-100">
                         <div class="mx-auto col-md-8">
-                            <form class="needs-validation" id="signupForm" method="POST" action="/register" novalidate>
+                            <form class="needs-validation" id="registerForm" method="POST" action="/register" novalidate>
                                 <div class="p-b-20 text-center">
                                     <p>
                                         <img src="assets/img/logo.png" width="160" alt="">
@@ -43,7 +43,7 @@
                                 <h3 class="text-center p-b-20 fw-400">Register</h3>
 
                                 <div class="form-row">
-                                    <div id="errorMsg"></div>
+                                    <div id="errorMsg" class="form-group col-md-12"></div>
                                     <div class="form-group floating-label col-md-12">
                                         <label>First Name</label>
                                         <input type="text" required class="form-control" placeholder="First Name" id="firstName" name="firstName" />
@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
 
-                                <button type="button" id="signup_btn" class="btn btn-primary btn-block btn-lg">Create Account</button>
+                                <button type="button" id="register_btn" class="btn btn-primary btn-block btn-lg">Create Account</button>
 
                             </form>
                             <p class="text-right p-t-10">
@@ -85,8 +85,8 @@
     <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
     <script src="assets/js/form-validate.js"></script>
     <script>
-        $("#signup_btn").on("click", function (e) {
-            var form = $("#signupForm");
+        $("#register_btn").on("click", function (e) {
+            var form = $("#registerForm");
             if (form[0].checkValidity() === false) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -94,7 +94,7 @@
                 return;
             }
             $.ajax({
-                url: '/api/register',
+                url: '/register',
                 type: 'POST',
                 data: {
                     firstName: $("#firstName").val(),

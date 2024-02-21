@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Task Management | Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="assets/img/logo.png" />
+    <link rel="icon" href="assets/img/logo.png" type="image/png" sizes="16x16">
+    <link rel="stylesheet" href="assets/vendor/pace/pace.css">
+    <script src="assets/vendor/pace/pace.min.js"></script>
+    <!--vendors-->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/jquery-scrollbar/jquery.scrollbar.css">
+    <link rel="stylesheet" href="assets/vendor/select2/css/select2.min.css">
+    <link rel="stylesheet" href="assets/vendor/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="assets/vendor/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="assets/vendor/timepicker/bootstrap-timepicker.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+    <link rel="stylesheet" href="assets/fonts/jost/jost.css">
+    <!--Material Icons-->
+    <link rel="stylesheet" type="text/css" href="assets/fonts/materialdesignicons/materialdesignicons.min.css">
+    <!--Bootstrap + atmos Admin CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/atmos.min.css">
+    <!-- Additional library for page -->
+    <link rel="stylesheet" href="assets/vendor/fullcalender/fullcalendar.min.css">
+
+</head>
+
+<body class="sidebar-pinned ">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">
+            <!-- begin sidebar branding-->
+            <img class="admin-brand-logo" src="assets/img/logo.png" width="40" alt="task Logo">
+            <span class="admin-brand-content font-secondary px-3"><a href="/dasboard"> Task</a></span>
+            <!-- end sidebar branding-->
+            <div class="ml-auto">
+                <!-- sidebar pin-->
+                <a href="#" class="admin-pin-sidebar btn-ghost btn btn-rounded-circle"></a>
+                <!-- sidebar close for mobile device-->
+                <a href="#" class="admin-close-sidebar"></a>
+            </div>
+        </div>
+        <div class="admin-sidebar-wrapper js-scrollbar">
+            <ul class="menu">
+                <li class="menu-item active">
+                    <a href="/dashboard" class="menu-link">
+                        <span class="menu-label">
+                            <span class="menu-name">Dashboard</span>
+                        </span>
+                        <span class="menu-icon">
+                            <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        </span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/tasks" class="menu-link">
+                        <span class="menu-label">
+                            <span class="menu-name">Tasks</span>
+                        </span>
+                        <span class="menu-icon">
+                            <i class="icon-placeholder mdi mdi-webpack"></i>
+                        </span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/events" class="menu-link">
+                        <span class="menu-label">
+                            <span class="menu-name">Events</span>
+                        </span>
+                        <span class="menu-icon">
+                            <i class="icon-placeholder mdi mdi-polymer"></i>
+                        </span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/users" class="menu-link">
+                        <span class="menu-label">
+                            <span class="menu-name">User</span>
+                        </span>
+                        <span class="menu-icon">
+                            <i class="icon-placeholder mdi mdi-account"></i>
+                        </span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/categories" class="menu-link">
+                        <span class="menu-label">
+                            <span class="menu-name">Category</span>
+                        </span>
+                        <span class="menu-icon">
+                            <i class="icon-placeholder mdi mdi-finance"></i>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+
+    </aside>
+    <main class="admin-main">
+        <!--site header begins-->
+        <header class="admin-header">
+            <a href="#" class="sidebar-toggle" data-toggleclass="sidebar-open" data-target="body"> </a>
+            <nav class=" ml-auto">
+                <ul class="nav align-items-center">
+
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false"> <i class="mdi mdi-24px mdi-bell-outline"></i>
+                                <span class="notification-counter"></span>
+                            </a>
+
+                            <div class="dropdown-menu notification-container dropdown-menu-right">
+                                <div class="d-flex p-all-15 bg-white justify-content-between border-bottom ">
+                                    <a href="#!" class="mdi mdi-18px mdi-settings text-muted"></a>
+                                    <span class="h5 m-0">Notifications</span>
+                                    <a href="#!" class="mdi mdi-18px mdi-notification-clear-all text-muted"></a>
+                                </div>
+                                <div class="notification-events bg-gray-300">
+                                    <div class="text-overline m-b-5">today</div>
+                                    <a href="#" class="d-block m-b-10">
+                                        <div class="card">
+                                            <div class="card-body"> <i class="mdi mdi-circle text-success"></i> All
+                                                systems operational.</div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="d-block m-b-10">
+                                        <div class="card">
+                                            <div class="card-body"> <i class="mdi mdi-upload-multiple "></i> File upload
+                                                successful.</div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="d-block m-b-10">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <i class="mdi mdi-cancel text-danger"></i> Your holiday has been denied
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <div class="avatar avatar-sm avatar-online">
+                                <span class="avatar-title rounded-circle bg-dark">V</span>
+
+                            </div>
+                        </a>
+                        <div class="dropdown-menu  dropdown-menu-right">
+                            <a class="dropdown-item" href="#"> Profile
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout"> Logout</a>
+                        </div>
+                    </li>
+
+                </ul>
+
+            </nav>
+        </header>
+        <!--site header ends -->
+        <section class="admin-content">
+            <div class="bg-dark m-b-30">
+                <div class="container">
+                    <div class="row p-b-60 p-t-60">
+
+                        <div class="col-md-8 m-auto text-white p-b-30">
+
+                            <h1> Dashboard </h1>
+                        </div>
+                        <div class="col-md-4 m-auto text-white p-b-30">
+                            <div class="text-md-right">
+
+                                <p class="opacity-75">Calender is shared with</p>
+                                <div class="avatar-group">
+                                    <div class="avatar">
+                                        <img src="assets/img/users/user-4.jpg" alt="..."
+                                            class="avatar-img rounded-circle">
+                                    </div>
+                                    <div class="avatar">
+                                        <img src="assets/img/users/user-1.jpg" alt="..."
+                                            class="avatar-img rounded-circle">
+                                    </div>
+                                    <div class="avatar">
+                                        <img src="assets/img/users/user-7.jpg" alt="..."
+                                            class="avatar-img rounded-circle">
+                                    </div>
+                                    <div class="avatar">
+                                        <span class="avatar-title rounded-circle bg-warning">V</span>
+                                    </div>
+                                    <a href="#" class="avatar">
+                                        <span class="avatar-title rounded-circle bg-info mdi mdi-plus"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="container pull-up">
+                <div class="row">
+                    <div class="col-lg-3 m-b-30">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Create Events</div>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="m-b-10">
+                                    <input id="new-event" type="text" class="form-control" placeholder="Event Title">
+
+                                </div>
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  rounded-circle"></div>
+                                </div>
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-primary rounded-circle">
+                                    </div>
+                                </div>
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-secondary rounded-circle">
+                                    </div>
+                                </div>
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-success rounded-circle">
+                                    </div>
+                                </div>
+
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-danger rounded-circle">
+                                    </div>
+                                </div>
+
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-warning rounded-circle">
+                                    </div>
+                                </div>
+
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-info rounded-circle"></div>
+                                </div>
+
+                                <div class="avatar avatar-xs m-r-5 ">
+                                    <div class="avatar-title text-white  js-event-color  bg-dark rounded-circle"></div>
+                                </div>
+
+                                <div class="m-t-10">
+                                    <button id="add-new-event" type="button" class="btn btn-primary btn-block">Create
+                                        Event
+                                    </button>
+                                </div>
+                                <hr>
+                                <h6>Events</h6>
+                                <div id="external-events" class="m-t-20">
+                                    <div class="js-external-event m-b-10 rounded p-all-10 text-white bg-primary ">Lunch
+                                    </div>
+                                    <div class="js-external-event m-b-10 rounded p-all-10 text-white bg-success ">Go
+                                        home
+                                    </div>
+                                    <div class="js-external-event m-b-10 rounded p-all-10 text-white bg-info ">Do
+                                        homework
+                                    </div>
+                                    <div class="js-external-event m-b-10 rounded p-all-10 text-white bg-danger ">Sleep
+                                        tight
+                                    </div>
+                                    <div class="checkbox">
+                                        <label for="drop-remove">
+                                            <input type="checkbox" id="drop-remove" checked>
+                                            remove after drop
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-9 m-b-30">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="assets/vendor/popper/popper.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/vendor/select2/js/select2.full.min.js"></script>
+    <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="assets/vendor/listjs/listjs.min.js"></script>
+    <script src="assets/vendor/moment/moment.min.js"></script>
+    <script src="assets/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script src="assets/js/atmos.min.js"></script>
+    <!--page specific scripts for demo-->
+
+    <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="assets/vendor/jquery.touchpunch/touchpunch.min.js"></script>
+    <script src="assets/vendor/fullcalender/fullcalendar.min.js"></script>
+    <script src="assets/js/calender-data.js"></script>
+</body>
+
+</html>

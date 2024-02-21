@@ -11,11 +11,9 @@
     <link rel="icon" type="image/x-icon" href="assets/img/logo.png" />
     <link rel="icon" href="assets/img/logo.png" type="image/png" sizes="16x16">
     <!--vendors-->
-    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" type="text/css" href="assets/vendor/jquery-scrollbar/jquery.scrollbar.css">
     <link rel="stylesheet" href="assets/vendor/jquery-ui/jquery-ui.min.css">
     <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
-    <link rel="stylesheet" href="assets/fonts/jost/jost.css">
     <!--Material Icons-->
     <link rel="stylesheet" type="text/css" href="assets/fonts/materialdesignicons/materialdesignicons.min.css">
     <!--Bootstrap + atmos Admin CSS-->
@@ -42,21 +40,25 @@
                                 </p>
                             </div>
                             <h3 class="text-center p-b-20 fw-400">Login</h3>
-                            <form class="needs-validation" action="/login">
+                            <form class="needs-validation" id="loginForm" method="POST" action="/login" novalidate>
                                 <div class="form-row">
+                                    <div id="errorMsg" class="form-group col-md-12"></div>
                                     <div class="form-group floating-label col-md-12">
                                         <label>Email</label>
-                                        <input type="email" required class="form-control" placeholder="Email">
+                                        <input type="email" id="email" name="email" required class="form-control" placeholder="Email">
                                     </div>
                                     <div class="form-group floating-label col-md-12">
                                         <label>Password</label>
-                                        <input type="password" required class="form-control " placeholder="Password">
+                                        <input type="password" id="password" name="password" required class="form-control " placeholder="Password">
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
+                                <button type="button" id="login_btn" class="btn btn-primary btn-block btn-lg">Login</button>
 
                             </form>
+                            <p class="text-center p-t-20">
+                                <a href="/register" class="btn btn-danger btn-block btn-lg">Create Account</a>
+                            </p>
                             <p class="text-right p-t-10">
                                 <a href="#!" class="text-underline">Forgot Password?</a>
                             </p>
@@ -70,14 +72,86 @@
             </div>
         </div>
     </main>
+    <% if (status === 'logout') { %>
+        <input type="hidden" id="logout" value="<%= status %>">
+    <% } %>
 
     <script src="assets/vendor/jquery/jquery.min.js"></script>
     <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
     <script src="assets/vendor/popper/popper.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="assets/js/form-validate.js"></script>
+    <script>
+        const logoutField = $('#logout').val();
+        if (logoutField) {
+            document.cookie = "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+            window.location.href = '/login';
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('userData');
+        }
+    </script>
+    <script>
+        $("#login_btn").on("click", function (e) {
+            var form = $("#loginForm");
+            if (form[0].checkValidity() === false) {
+                e.preventDefault();
+                e.stopPropagation();
+                form[0].classList.add("was-validated");
+                return;
+            }
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                data: {
+                    email: $("#email").val(),
+                    password: $("#password").val(),
+                },
+                success: function (result) {
+                    console.log(result)
+                    if (result.status == "success") {
+                        localStorage.setItem('accessToken', result.response.accessToken);
+                        localStorage.setItem('userData', JSON.stringify(result.response.userData));
+                        document.cookie = `token=${result.response.accessToken}`;
+                        $("#errorMsg").html(
+                            '<div class="alert alert-border-success  alert-dismissible fade show" role="alert">' +
+                                '<div class="d-flex">' +
+                                    '<div class="icon">' +
+                                        '<i class="icon mdi mdi-check-circle-outline"></i>' +
+                                    '</div>' +
+                                    '<div class="content">' +
+                                        '<strong>' + result.message + '</strong>' +
+                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                            '<span aria-hidden="true">×</span>' +
+                                        '</button>' +
+                                    '</div>' +
+                                '</div>' +
 
+                            '</div>' 
+                        );
+                        window.location.href = '/dashboard';
+                    } else {
+                        $("#errorMsg").html(
+                            '<div class="alert alert-border-danger  alert-dismissible fade show" role="alert">' +
+                                '<div class="d-flex">' +
+                                    '<div class="icon">' +
+                                        '<i class="icon mdi mdi-alert-octagram"></i>' +
+                                    '</div>' +
+                                    '<div class="content">' +
+                                        '<strong>' + result.message + '</strong>' +
+                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                            '<span aria-hidden="true">×</span>' +
+                                        '</button>' +
+                                    '</div>' +
+                                '</div>' +
 
+                            '</div>' 
+                        );
+                    }
+                },
+            });
+        })
+    </script>
 </body>
 
 </html>
