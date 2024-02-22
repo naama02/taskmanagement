@@ -17,11 +17,16 @@ const taskSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    image: {
+    attachedFile: {
         type: String,
         default: '',
     },
-    attachedFile: {
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    color: {
         type: String,
         default: '',
     },

@@ -7,10 +7,11 @@ module.exports = (usergroupsAllowed) => async function auth(req, res, next) {
         return res.redirect('/login');
     } else {
         const token = authCookie.split(`=`)[1];
-
+        console.log(token)
         if (token) {
             try {
                 const verified = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
+                console.log(verified)
                 req.user = verified;
 
                 let user;

@@ -48,15 +48,21 @@ const loginRoute = require('./routes/login');
 const registerRoute = require('./routes/register');
 const logoutRoute = require('./routes/logout');
 const dashboardRoute = require('./routes/dashboard');
+const fileRoute = require('./routes/file');
+const taskRoute = require('./routes/task');
+const eventRoute = require('./routes/event');
 
 app.use('', loginRoute);
 app.use('', registerRoute);
 app.use('', logoutRoute);
 app.use('', dashboardRoute);
+app.use('', taskRoute);
+app.use('', eventRoute);
+app.use('', fileRoute);
 
 // Handle 404 errors
 app.use((req, res) => {
-    res.status(404).render('error');
+    res.status(404).render('error', { message: "404" });
 });
 
 
