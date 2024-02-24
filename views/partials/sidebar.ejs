@@ -1,0 +1,70 @@
+<aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+        <!-- begin sidebar branding-->
+        <img class="admin-brand-logo" src="assets/img/logo.png" width="40" alt="task Logo">
+        <span class="admin-brand-content font-secondary px-3"><a href="/dashboard"> Task</a></span>
+        <!-- end sidebar branding-->
+        <div class="ml-auto">
+            <!-- sidebar pin-->
+            <a href="#" class="admin-pin-sidebar btn-ghost btn btn-rounded-circle"></a>
+            <!-- sidebar close for mobile device-->
+            <a href="#" class="admin-close-sidebar"></a>
+        </div>
+    </div>
+    <div class="admin-sidebar-wrapper js-scrollbar">
+        <ul class="menu">
+            <li class="menu-item <%= curPath.includes('dashboard') ? 'active' : '' %>">
+                <a href="/dashboard" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Dashboard</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item <%= curPath.includes('task') ? 'active' : '' %>">
+                <a href="/tasks" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Tasks</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-webpack"></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item <%= curPath.includes('event') ? 'active' : '' %>">
+                <a href="/events" class="menu-link ">
+                    <span class="menu-label">
+                        <span class="menu-name">Events</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-polymer"></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item <%= curPath.includes('user') ? 'active' : '' %>">
+                <a href="/users" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Users</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-account"></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/categories" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Category</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-finance"></i>
+                    </span>
+                </a>
+            </li>
+        </ul>
+
+    </div>
+
+</aside>

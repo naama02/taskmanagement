@@ -1,4 +1,5 @@
 const Task = require("../models/Task");
+const moment = require("moment");
 
 const createTask = async (req, res) => {   
     // check for unique task
@@ -28,6 +29,32 @@ const createTask = async (req, res) => {
     }
 }
 
+const taskListView = async (req, res) => {   
+    const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
+    const tasks = await Task.find(searchFilter).populate({
+        path: 'user',
+        select: {
+        _id: 1, firstName: 1, lastName: 1,
+        },
+    });
+    return res.render('taskList', { 'status': '', curPath: req.path, tasks: tasks, moment: moment })
+}
+
+const taskList = async (req, res) => {   
+    const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
+
+    try {
+        const tasks = await Task.find(searchFilter);
+        
+        return res.send({ tasks: tasks })
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({ status: "error", message: err.message })
+    }
+}
+
 module.exports = {
-    createTask
+    taskList,
+    createTask,
+    taskListView,
 }

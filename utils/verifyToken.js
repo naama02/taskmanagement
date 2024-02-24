@@ -7,7 +7,6 @@ module.exports = (usergroupsAllowed) => async function auth(req, res, next) {
         return res.redirect('/login');
     } else {
         const token = authCookie.split(`=`)[1];
-        console.log(token)
         if (token) {
             try {
                 const verified = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
@@ -22,7 +21,7 @@ module.exports = (usergroupsAllowed) => async function auth(req, res, next) {
                 }
                 next();
             } catch (err) {
-                return res.render('error', { status: 'error', message: 'Invalid or expired auth token' });
+                return res.redirect('/login');
             }
         } else {
             return res.render('error', { status: 'error', message: 'Malformed or unauthenticated auth token' });

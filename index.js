@@ -51,6 +51,7 @@ const dashboardRoute = require('./routes/dashboard');
 const fileRoute = require('./routes/file');
 const taskRoute = require('./routes/task');
 const eventRoute = require('./routes/event');
+const userRoute = require('./routes/users');
 
 app.use('', loginRoute);
 app.use('', registerRoute);
@@ -59,6 +60,7 @@ app.use('', dashboardRoute);
 app.use('', taskRoute);
 app.use('', eventRoute);
 app.use('', fileRoute);
+app.use('', userRoute);
 
 // Handle 404 errors
 app.use((req, res) => {

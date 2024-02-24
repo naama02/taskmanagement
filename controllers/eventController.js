@@ -1,4 +1,5 @@
 const Event = require("../models/Event");
+const moment = require("moment");
 
 const createEvent = async (req, res) => {   
     // check for unique event
@@ -28,6 +29,18 @@ const createEvent = async (req, res) => {
     }
 }
 
+const eventListView = async (req, res) => {   
+    const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
+    const events = await Event.find(searchFilter).populate({
+        path: 'user',
+        select: {
+            _id: 1, firstName: 1, lastName: 1,
+        },
+    });
+    return res.render('eventList', { 'status': '', curPath: req.path, events: events, moment: moment })
+}
+
 module.exports = {
-    createEvent
+    createEvent,
+    eventListView,
 }

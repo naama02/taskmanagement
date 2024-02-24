@@ -17,6 +17,10 @@ const taskSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    deadline: {
+        type: String,
+        default: '',
+    },
     attachedFile: {
         type: String,
         default: '',

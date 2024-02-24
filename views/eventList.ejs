@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Task Management | Events</title>
+    <link rel="icon" type="image/x-icon" href="assets/img/logo.png" />
+    <link rel="icon" href="assets/img/logo.png" type="image/png" sizes="16x16">
+    <link rel="stylesheet" href="assets/vendor/pace/pace.css">
+    <script src="assets/vendor/pace/pace.min.js"></script>
+    <!--vendors-->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/jquery-scrollbar/jquery.scrollbar.css">
+    <link rel="stylesheet" href="assets/vendor/jquery-ui/jquery-ui.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+    <link rel="stylesheet" href="assets/fonts/jost/jost.css">
+    <!--Material Icons-->
+    <link rel="stylesheet" type="text/css" href="assets/fonts/materialdesignicons/materialdesignicons.min.css">
+    <!--Bootstrap + atmos Admin CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/atmos.min.css">
+    <!-- Additional library for page -->
+    <link rel="stylesheet" href="assets/vendor/DataTables/datatables.min.css">
+    <link rel="stylesheet" href="assets/vendor/DataTables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css">
+</head>
+
+<body class="sidebar-pinned">
+    <%- include('partials/sidebar.ejs') %>
+    <main class="admin-main">
+        <%- include('partials/header.ejs') %>
+        <section class="admin-content">
+            <div class="bg-dark">
+                <div class="container  m-b-30">
+                    <div class="row">
+                        <div class="col-12 text-white p-t-40 p-b-90">
+
+                            <h4 class="">
+                                Events
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container pull-up">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a herf="" class="btn btn-primary btn-sm text-white">Add</a>
+                                    </div>
+
+                                </div>
+                                <div class="table-responsive p-t-10">
+                                    <table id="eventTable" class="table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>date</th>
+                                                <th>hour</th>
+                                                <th>Location</th>
+                                                <th>user</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% events.forEach(function(event) { %>
+                                            <tr>
+                                                <td><%= event.title %></td>
+                                                <td><%= moment(event.date).format('LL') %></td>
+                                                <td><%= event.hour %></td>
+                                                <td><%= event.location %></td>
+                                                <td><%= event.user.firstName %> <%= event.user.lastName %></td>
+                                                <td><%= event.description %></td>
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="assets/vendor/popper/popper.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="assets/vendor/listjs/listjs.min.js"></script>
+    <script src="assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <!--page specific scripts for demo-->
+
+    <script src="assets/vendor/DataTables/datatables.min.js"></script>
+    <script>
+        $('#eventTable').DataTable({});
+    </script>
+</body>
+
+</html>
