@@ -29,82 +29,196 @@
 
 <body class="sidebar-pinned">
     <%- include('partials/sidebar.ejs') %>
-    <main class="admin-main">
-        <%- include('partials/header.ejs') %>
-        <section class="admin-content">
-            <div class="bg-dark">
-                <div class="container  m-b-30">
-                    <div class="row">
-                        <div class="col-12 text-white p-t-40 p-b-90">
+        <main class="admin-main">
+            <%- include('partials/header.ejs') %>
+                <section class="admin-content">
+                    <div class="bg-dark">
+                        <div class="container  m-b-30">
+                            <div class="row">
+                                <div class="col-12 text-white p-t-40 p-b-90">
 
-                            <h4 class="">
-                                Events
-                            </h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container pull-up">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <a herf="" class="btn btn-primary btn-sm text-white">Add</a>
-                                    </div>
-
-                                </div>
-                                <div class="table-responsive p-t-10">
-                                    <table id="eventTable" class="table" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>date</th>
-                                                <th>hour</th>
-                                                <th>Location</th>
-                                                <th>user</th>
-                                                <th>Description</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% events.forEach(function(event) { %>
-                                            <tr>
-                                                <td><%= event.title %></td>
-                                                <td><%= moment(event.date).format('LL') %></td>
-                                                <td><%= event.hour %></td>
-                                                <td><%= event.location %></td>
-                                                <td><%= event.user.firstName %> <%= event.user.lastName %></td>
-                                                <td><%= event.description %></td>
-                                            </tr>
-                                            <% }) %>
-                                        </tbody>
-                                    </table>
+                                    <h4 class="">
+                                        Events
+                                    </h4>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="container pull-up">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href="/create-event"
+                                                    class="btn btn-primary btn-sm text-white">Add</a>
+                                            </div>
+
+                                        </div>
+                                        <div class="table-responsive p-t-10">
+                                            <table id="eventTable" class="table" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Title</th>
+                                                        <th>date</th>
+                                                        <th>hour</th>
+                                                        <th>Location</th>
+                                                        <th>user</th>
+                                                        <th>Description</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% events.forEach(function(event) { %>
+                                                        <tr>
+                                                            <td>
+                                                                <%= event.title %>
+                                                            </td>
+                                                            <td>
+                                                                <%= moment(event.date).format('LL') %>
+                                                            </td>
+                                                            <td>
+                                                                <%= event.hour %>
+                                                            </td>
+                                                            <td>
+                                                                <%= event.location %>
+                                                            </td>
+                                                            <td>
+                                                                <%= event.user.firstName %>
+                                                                    <%= event.user.lastName %>
+                                                            </td>
+                                                            <td>
+                                                                <%= event.description.length> 50 ?
+                                                                    event.description.substring(0, 50) + '...' :
+                                                                    event.description %>
+                                                            </td>
+                                                            <td>
+                                                                <a href="/edit-event/<%= event._id %>">
+                                                                    <div class="avatar m-1" style="width: 1.8rem; height: 1.8rem;cursor: pointer;">
+                                                                        <div
+                                                                            class="avatar-title bg-primary" style="border-radius: 20% !important;">
+                                                                            <span data-notify="icon"
+                                                                                class="mdi mdi-pencil"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                                <a href="javascript:void(0);" class="event-delete" data-id="<%= event._id %>">
+                                                                    <div class="avatar m-1" style="width: 1.8rem; height: 1.8rem;cursor: pointer;">
+                                                                        <div
+                                                                            class="avatar-title bg-danger" style="border-radius: 20% !important;">
+                                                                            <span data-notify="icon"
+                                                                                class="mdi mdi-delete"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+        </main>
+        <!-- Modal -->
+        <div class="modal fade " id="eventDeleteModal" data-backdrop="static" tabindex="-1" role="dialog"
+            aria-hidden="true">
+            <div class="modal-dialog  modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="modal-body">
+                        <div class="px-3 pt-3 text-center">
+                            <div class="event-type warning">
+                                <div class="event-indicator ">
+                                    <i class="mdi mdi-exclamation text-white" style="font-size: 60px"></i>
+                                </div>
+                            </div>
+                            <h3 class="pt-3">Are you sure?</h3>
+                            <p class="text-muted">
+                                Action will delete selected event.
+                            </p>
+
+                        </div>
+                        <input type="hidden" id="event_del_id" value="" />
+                    </div>
+                    <div class="modal-footer ">
+                        <a href="javascript:void(0);" class="btn btn-primary" id="event_delete_btn">OK</a>
+                        <a href="javascript:void(0);" class="btn btn-secondary" data-dismiss="modal"
+                            aria-label="Close">cancel</a>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+        <!-- Modal Ends -->
+        <script src="assets/vendor/jquery/jquery.min.js"></script>
+        <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+        <script src="assets/vendor/popper/popper.js"></script>
+        <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+        <script src="assets/vendor/listjs/listjs.min.js"></script>
+        <script src="assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+        <!--page specific scripts for demo-->
 
-    </main>
+        <script src="assets/vendor/DataTables/datatables.min.js"></script>
+        <script>
+            $('#eventTable').DataTable({});
+            $(document).on('click', '.event-delete', function (e) {
+                $("#eventDeleteModal").modal('show');
+                const eventId = $(this).data('id');
+                $("#event_del_id").val(eventId);
+            });
 
-    <script src="assets/vendor/jquery/jquery.min.js"></script>
-    <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
-    <script src="assets/vendor/popper/popper.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-    <script src="assets/vendor/listjs/listjs.min.js"></script>
-    <script src="assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
-    <!--page specific scripts for demo-->
+            $("#event_delete_btn").on('click', function (e) {
+                $.ajax({
+                    url: '/event-delete',
+                    type: 'POST',
+                    data: {
+                        eventId: $("#event_del_id").val()
+                    },
+                    success: function (result) {
+                        if (result.status == "success") {
+                            location.reload();
+                        } else {
+                            $.notify({
+                                // options
+                                icon: 'mdi mdi-alert',
+                                title: 'Alert',
+                                message: result.message
+                            }, {
+                                placement: {
+                                    align: "right",
+                                    from: "top"
+                                },
+                                showProgressbar: true,
+                                timer: 500,
+                                // settings
+                                type: 'danger',
+                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                    '<div class="progress" data-notify="progressbar">' +
+                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                    '</div>' +
+                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
 
-    <script src="assets/vendor/DataTables/datatables.min.js"></script>
-    <script>
-        $('#eventTable').DataTable({});
-    </script>
+                            });
+                        }
+                    },
+                });
+            });
+        </script>
 </body>
 
 </html>

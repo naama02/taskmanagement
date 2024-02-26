@@ -25,14 +25,20 @@ const taskSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    
+    color: {
+        type: String,
+        default: '',
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    color: {
-        type: String,
-        default: '',
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true,
     },
 }, {
     timestamps: {

@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Task Management | Tasks</title>
+    <title>Task Management | Category</title>
     <link rel="icon" type="image/x-icon" href="assets/img/logo.png" />
     <link rel="icon" href="assets/img/logo.png" type="image/png" sizes="16x16">
     <link rel="stylesheet" href="assets/vendor/pace/pace.css">
@@ -38,7 +38,7 @@
                                 <div class="col-12 text-white p-t-40 p-b-90">
 
                                     <h4 class="">
-                                        Tasks
+                                        Category
                                     </h4>
                                 </div>
                             </div>
@@ -51,62 +51,27 @@
                                 <div class="card">
 
                                     <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a href="/create-task" class="btn btn-primary btn-sm text-white">Add</a>
-                                            </div>
-
-                                        </div>
                                         <div class="table-responsive p-t-10">
-                                            <table id="taskTable" class="table" style="width:100%">
+                                            <table id="categoryTable" class="table" style="width:100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Title</th>
-                                                        <th>date</th>
-                                                        <th>hour</th>
-                                                        <th>Deadline</th>
-                                                        <th>user</th>
-                                                        <th>Description</th>
+                                                        <th>Category Name</th>
+                                                        <th>Created User</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <% tasks.forEach(function(task) { %>
+                                                    <% categories.forEach(function(category) { %>
                                                         <tr>
                                                             <td>
-                                                                <%= task.title %>
+                                                                <%= category.name %>
                                                             </td>
                                                             <td>
-                                                                <%= moment(task.date).format('LL') %>
+                                                                <%= category.user.firstName %> <%= category.user.lastName %>
                                                             </td>
                                                             <td>
-                                                                <%= task.hour %>
-                                                            </td>
-                                                            <td>
-                                                                <%= task.deadline %>
-                                                            </td>
-                                                            <td>
-                                                                <%= task.user.firstName %>
-                                                                    <%= task.user.lastName %>
-                                                            </td>
-                                                            <td>
-                                                                <%= task.description.length> 50 ?
-                                                                    task.description.substring(0, 50) + '...' :
-                                                                    task.description %>
-                                                            </td>
-                                                            <td>
-                                                                <a href="/edit-task/<%= task._id %>">
-                                                                    <div class="avatar m-1"
-                                                                        style="width: 1.8rem; height: 1.8rem;cursor: pointer;">
-                                                                        <div class="avatar-title bg-primary"
-                                                                            style="border-radius: 20% !important;">
-                                                                            <span data-notify="icon"
-                                                                                class="mdi mdi-pencil"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                                <a href="javascript:void(0);" class="task-delete"
-                                                                    data-id="<%= task._id %>">
+                                                                <a href="javascript:void(0);" class="category-delete"
+                                                                    data-id="<%= category._id %>">
                                                                     <div class="avatar m-1"
                                                                         style="width: 1.8rem; height: 1.8rem;cursor: pointer;">
                                                                         <div class="avatar-title bg-danger"
@@ -131,7 +96,7 @@
 
         </main>
         <!-- Modal -->
-        <div class="modal fade " id="taskDeleteModal" data-backdrop="static" tabindex="-1" role="dialog"
+        <div class="modal fade " id="categoryDeleteModal" data-backdrop="static" tabindex="-1" role="dialog"
             aria-hidden="true">
             <div class="modal-dialog  modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -147,14 +112,14 @@
                             </div>
                             <h3 class="pt-3">Are you sure?</h3>
                             <p class="text-muted">
-                                Action will delete selected task.
+                                Action will delete selected category.
                             </p>
 
                         </div>
-                        <input type="hidden" id="task_del_id" value="" />
+                        <input type="hidden" id="category_del_id" value="" />
                     </div>
                     <div class="modal-footer ">
-                        <a href="javascript:void(0);" class="btn btn-primary" id="task_delete_btn">OK</a>
+                        <a href="javascript:void(0);" class="btn btn-primary" id="category_delete_btn">OK</a>
                         <a href="javascript:void(0);" class="btn btn-secondary" data-dismiss="modal"
                             aria-label="Close">cancel</a>
                     </div>
@@ -173,19 +138,20 @@
 
         <script src="assets/vendor/DataTables/datatables.min.js"></script>
         <script>
-            $('#taskTable').DataTable({});
-            $(document).on('click', '.task-delete', function (e) {
-                $("#taskDeleteModal").modal('show');
-                const taskId = $(this).data('id');
-                $("#task_del_id").val(taskId);
+            $('#categoryTable').DataTable({});
+
+            $(document).on('click', '.category-delete', function (e) {
+                $("#categoryDeleteModal").modal('show');
+                const categoryId = $(this).data('id');
+                $("#category_del_id").val(categoryId);
             });
 
-            $("#task_delete_btn").on('click', function (e) {
+            $("#category_delete_btn").on('click', function (e) {
                 $.ajax({
-                    url: '/task-delete',
+                    url: '/category-delete',
                     type: 'POST',
                     data: {
-                        taskId: $("#task_del_id").val()
+                        categoryId: $("#category_del_id").val()
                     },
                     success: function (result) {
                         if (result.status == "success") {

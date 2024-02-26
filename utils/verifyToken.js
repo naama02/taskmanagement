@@ -3,14 +3,20 @@ const User = require('../models/User');
 
 module.exports = (usergroupsAllowed) => async function auth(req, res, next) {
     const authCookie = req.headers.cookie;
+
     if (!authCookie) {
         return res.redirect('/login');
     } else {
-        const token = authCookie.split(`=`)[1];
+        const cookies = authCookie.split(';').reduce((acc, cookie) => {
+            const [key, value] = cookie.trim().split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+        const token = cookies.token;
+
         if (token) {
             try {
                 const verified = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
-                console.log(verified)
                 req.user = verified;
 
                 let user;

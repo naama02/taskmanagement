@@ -1,7 +1,7 @@
 <aside class="admin-sidebar">
     <div class="admin-sidebar-brand">
         <!-- begin sidebar branding-->
-        <img class="admin-brand-logo" src="assets/img/logo.png" width="40" alt="task Logo">
+        <img class="admin-brand-logo" src="../assets/img/logo.png" width="40" alt="task Logo">
         <span class="admin-brand-content font-secondary px-3"><a href="/dashboard"> Task</a></span>
         <!-- end sidebar branding-->
         <div class="ml-auto">
@@ -53,8 +53,8 @@
                     </span>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="/categories" class="menu-link">
+            <li class="menu-item <%= curPath.includes('category') ? 'active' : '' %>">
+                <a href="/category" class="menu-link">
                     <span class="menu-label">
                         <span class="menu-name">Category</span>
                     </span>

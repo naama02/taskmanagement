@@ -49,9 +49,12 @@ const registerRoute = require('./routes/register');
 const logoutRoute = require('./routes/logout');
 const dashboardRoute = require('./routes/dashboard');
 const fileRoute = require('./routes/file');
+const avatarRoute = require('./routes/avatar');
 const taskRoute = require('./routes/task');
 const eventRoute = require('./routes/event');
 const userRoute = require('./routes/users');
+const categoryRoute = require('./routes/category');
+const profileRoute = require('./routes/profile');
 
 app.use('', loginRoute);
 app.use('', registerRoute);
@@ -60,7 +63,10 @@ app.use('', dashboardRoute);
 app.use('', taskRoute);
 app.use('', eventRoute);
 app.use('', fileRoute);
+app.use('', avatarRoute);
 app.use('', userRoute);
+app.use('', categoryRoute);
+app.use('', profileRoute);
 
 // Handle 404 errors
 app.use((req, res) => {
