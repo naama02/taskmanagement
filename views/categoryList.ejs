@@ -70,6 +70,16 @@
                                                                 <%= category.user.firstName %> <%= category.user.lastName %>
                                                             </td>
                                                             <td>
+                                                                <a href="/edit-category/<%= category._id %>">
+                                                                    <div class="avatar m-1"
+                                                                        style="width: 1.8rem; height: 1.8rem;cursor: pointer;">
+                                                                        <div class="avatar-title bg-primary"
+                                                                            style="border-radius: 20% !important;">
+                                                                            <span data-notify="icon"
+                                                                                class="mdi mdi-pencil"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
                                                                 <a href="javascript:void(0);" class="category-delete"
                                                                     data-id="<%= category._id %>">
                                                                     <div class="avatar m-1"

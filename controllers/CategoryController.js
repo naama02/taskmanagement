@@ -43,8 +43,35 @@ const categoryDelete = async (req, res) => {
     }
 }
 
+const categoryUpdateView = async (req, res) => {
+
+    const category = await Category.findById(req.params.categoryId);
+    return res.render('editCategory', {
+        status: '',
+        category: category,
+        curPath: req.path,
+    });
+}
+
+const updateCategory = async (req, res) => {
+    const categoryData = {
+        name: req.body.name
+    };
+
+    try {
+        await Category.findOneAndUpdate({ _id: req.params.categoryId }, categoryData, { upsert: true, new: true });
+
+        return res.send({ status: "success", message: "Category successfully updated" })
+    } catch (err) {
+        console.log(err)
+        return res.send({ status: "error", message: err.message })
+    }
+}
+
 module.exports = {
     createCategory,
     categoryDelete,
     categoryListView,
+    categoryUpdateView,
+    updateCategory,
 }

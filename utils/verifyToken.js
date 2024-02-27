@@ -22,6 +22,7 @@ module.exports = (usergroupsAllowed) => async function auth(req, res, next) {
                 let user;
                 user = await User.findOne({ _id: req.user._id }).select('role');
                 req.user.role = user.role;
+                
                 if ((usergroupsAllowed) && (!usergroupsAllowed.includes(user.role))) {
                     return res.render('error', { status: 'error', message: 'You do not have permission to run this request' });
                 }

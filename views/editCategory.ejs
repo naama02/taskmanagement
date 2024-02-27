@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Task Management | Edit User</title>
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
+    <link rel="icon" href="../assets/img/logo.png" type="image/png" sizes="16x16">
+    <link rel="stylesheet" href="../assets/vendor/pace/pace.css">
+    <script src="../assets/vendor/pace/pace.min.js"></script>
+    <!--vendors-->
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/jquery-scrollbar/jquery.scrollbar.css">
+    <link rel="stylesheet" href="../assets/vendor/jquery-ui/jquery-ui.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/fonts/jost/jost.css">
+    <!--Material Icons-->
+    <link rel="stylesheet" type="text/css" href="../assets/fonts/materialdesignicons/materialdesignicons.min.css">
+    <!--Bootstrap + atmos Admin CSS-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/atmos.min.css">
+</head>
+<body class="sidebar-pinned">
+    <%- include('partials/sidebar.ejs') %>
+    <main class="admin-main">
+        <%- include('partials/header.ejs') %>
+        <section class="admin-content">
+            <div class="bg-dark">
+                <div class="container  m-b-30">
+                    <div class="row">
+                        <div class="col-12 text-white p-t-40 p-b-90">
+                            <h4 class="">
+                                Edit Category
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container pull-up">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <form class="needs-validation" id="editCategoryForm" method="POST" action="" novalidate>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="name">Name</label>
+                                            <input type="text" class="form-control" id="name" placeholder="Name" value="<%= category.name %>" required />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" id="edit_category" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/popper/popper.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../assets/vendor/listjs/listjs.min.js"></script>
+    <script src="../assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script src="../assets/js/form-validate.js"></script>
+    <script>
+        $('#edit_category').click(function (e) {
+            var form = $("#editCategoryForm");
+            if (form[0].checkValidity() === false) {
+                e.preventDefault();
+                e.stopPropagation();
+                form[0].classList.add("was-validated");
+                return;
+            }
+
+            const data = {
+                name: $("#name").val(),
+            }
+
+            $.ajax({
+                url: '/update-category/<%= category._id %>',
+                type: 'PUT',
+                data: data,
+                success: function (result) {
+                    if (result.status == "success") {
+                        window.location.href = '/category';
+                    } else {
+                        $.notify({
+                            // options
+                            icon: 'mdi mdi-alert',
+                            title: 'Alert',
+                            message: result.message
+                        }, {
+                            placement: {
+                                align: "right",
+                                from: "top"
+                            },
+                            showProgressbar: true,
+                            timer: 500,
+                            // settings
+                            type: 'danger',
+                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                '<div class="progress" data-notify="progressbar">' +
+                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                '</div>' +
+                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                        });
+                    }
+                },
+            });
+        });
+    </script>
+</body>
+
+
+</html>

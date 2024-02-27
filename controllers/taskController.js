@@ -112,7 +112,7 @@ const taskUpdateView = async (req, res) => {
         },
     }).select('-__v');
     const task = await Task.findById(req.params.taskId);
-    console.log(task)
+
     return res.render('editTask', {
         status: '',
         task: task,
