@@ -1,6 +1,8 @@
 const Task = require("../models/Task");
 const moment = require("moment");
 const { ObjectId } = require('mongodb');
+const Project = require("../models/Project");
+const Category = require("../models/Category");
 
 const createTask = async (req, res) => {
     // check for unique task
@@ -19,6 +21,8 @@ const createTask = async (req, res) => {
         user: req.user._id,
         color: req.body.color,
         category: req.body.category,
+        project: req.body.project,
+        type: req.body.type,
     }
 
     try {
@@ -35,7 +39,7 @@ const createTask = async (req, res) => {
             deadline: task.deadline,
         }
 
-        return res.send({ status: "success", message: "Task successfully created", taskData: tData });
+        return res.send({ status: "success", message: "Task successfully created", tdata: tData });
     } catch (err) {
         console.log(err)
         return res.send({ status: "error", message: err.message })
@@ -55,7 +59,7 @@ const taskListView = async (req, res) => {
 
 const taskList = async (req, res) => {
     const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
-
+    
     try {
         const tasks = await Task.find(searchFilter);
 
@@ -67,16 +71,55 @@ const taskList = async (req, res) => {
 }
 
 const taskCreateView = async (req, res) => {
-    return res.render('createTask', { 'status': '', curPath: req.path })
+    let query = {
+        $or: [
+            { owner: req.user._id },
+            { groups: { $in: [req.user._id] } }
+        ]
+    };
+
+    if (req.user.role === 'admin') {
+        query = {}; // Fetch all projects for admin
+    }
+    const projects = await Project.find(query);
+    const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
+    const categories = await Category.find(searchFilter).populate({
+        path: 'user',
+        select: {
+            _id: 1, firstName: 1, lastName: 1,
+        },
+    }).select('-__v');
+    return res.render('createTask', { 'status': '', curPath: req.path, projects: projects, categories: categories })
 }
 
 const taskUpdateView = async (req, res) => {
+    let query = {
+        $or: [
+            { owner: req.user._id },
+            { groups: { $in: [req.user._id] } }
+        ]
+    };
+
+    if (req.user.role === 'admin') {
+        query = {}; // Fetch all projects for admin
+    }
+    const projects = await Project.find(query);
+    const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
+    const categories = await Category.find(searchFilter).populate({
+        path: 'user',
+        select: {
+            _id: 1, firstName: 1, lastName: 1,
+        },
+    }).select('-__v');
     const task = await Task.findById(req.params.taskId);
+    console.log(task)
     return res.render('editTask', {
         status: '',
         task: task,
         curPath: req.path,
-        moment: moment
+        moment: moment,
+        projects: projects, 
+        categories: categories
     });
 }
 
@@ -91,6 +134,9 @@ const updateTask = async (req, res) => {
             deadline: req.body.deadline,
             attachedFile: req.body.attachedFile,
             color: req.body.color,
+            type: req.body.type,
+            category: req.body.category,
+            project: req.body.project,
         }
     } else {
         taskData = {
@@ -100,6 +146,9 @@ const updateTask = async (req, res) => {
             hour: req.body.hour,
             deadline: req.body.deadline,
             color: req.body.color,
+            type: req.body.type,
+            category: req.body.category,
+            project: req.body.project,
         }
     }
 
@@ -119,10 +168,8 @@ const updateTaskDate = async (req, res) => {
         date: req.body.date,
         hour: req.body.hour,
     }
-    console.log(taskData)
     try {
         await Task.findOneAndUpdate({ _id: req.params.taskId }, taskData, { upsert: true, new: true });
-        console.log(taskData)
         return res.send({ status: "success", message: "Task successfully updated" })
     } catch (err) {
         console.log(err)

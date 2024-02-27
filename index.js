@@ -55,6 +55,7 @@ const eventRoute = require('./routes/event');
 const userRoute = require('./routes/users');
 const categoryRoute = require('./routes/category');
 const profileRoute = require('./routes/profile');
+const projectRoute = require('./routes/project');
 
 app.use('', loginRoute);
 app.use('', registerRoute);
@@ -67,6 +68,7 @@ app.use('', avatarRoute);
 app.use('', userRoute);
 app.use('', categoryRoute);
 app.use('', profileRoute);
+app.use('', projectRoute);
 
 // Handle 404 errors
 app.use((req, res) => {

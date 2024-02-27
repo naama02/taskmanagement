@@ -40,6 +40,16 @@ const taskSchema = new mongoose.Schema({
         ref: 'Category',
         required: true,
     },
+    project: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project',
+        required: true,
+    },
+    type: {
+        type: String,
+        enum: ['personal', 'group'],
+        default: 'group',
+    },
 }, {
     timestamps: {
         createdAt: 'createdAt',
