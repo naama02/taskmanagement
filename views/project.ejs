@@ -47,21 +47,7 @@
 
                                 <p class="opacity-75">Calender is shared with</p>
                                 <div class="avatar-group">
-                                    <div class="avatar">
-                                        <img src="../assets/img/users/user-4.jpg" alt="..."
-                                            class="avatar-img rounded-circle">
-                                    </div>
-                                    <div class="avatar">
-                                        <img src="../assets/img/users/user-1.jpg" alt="..."
-                                            class="avatar-img rounded-circle">
-                                    </div>
-                                    <div class="avatar">
-                                        <img src="../assets/img/users/user-7.jpg" alt="..."
-                                            class="avatar-img rounded-circle">
-                                    </div>
-                                    <div class="avatar">
-                                        <span class="avatar-title rounded-circle bg-warning">V</span>
-                                    </div>
+                                    <div id="invitedList"></div>
                                     <a href="javascript:void(0);" class="avatar" id="invite_user">
                                         <span class="avatar-title rounded-circle bg-info mdi mdi-plus"></span>
                                     </a>
@@ -129,7 +115,9 @@
                                     </div>
                                     <div class="m-b-10">
                                         <select id="type" class="form-control" required>
+                                            <% if (project.owner.toString() == currentUser.toString()) { %>
                                             <option value="personal">Personal</option>
+                                            <% } %>
                                             <option value="group">Group</option>
                                         </select>
                                     </div>
@@ -295,6 +283,7 @@
             m = date.getMonth(),
             y = date.getFullYear()
         let eventScheduleData = [];
+
         function getDashboardSchedule() {
             $.ajax({
                 url: '/dashboard-schedule',
@@ -414,6 +403,44 @@
             });
         }
         getDashboardSchedule();
+
+        function getInvitedList() {
+            $.ajax({
+                url: '/invite-list',
+                type: 'POST',
+                data: {
+                    projectId: '<%= project._id %>'
+                },
+                success: function (result) {
+                    if (result.status == "success") {
+                        const colors = ['bg-primary', 'bg-danger', 'bg-dark', 'bg-success', 'bg-info'];
+                        for (var group of result.projectGroups) {
+                            if (group.photo) {
+                                $("#invitedList").append(
+                                    '<div class="avatar">' +
+                                        '<img src="' + group.photo + '" alt="..." class="avatar-img rounded-circle" data-toggle="tooltip" title="' + group.firstName + '">' +
+                                    '</div>'
+                                )
+                            } else {
+                                const randomIndex = Math.floor(Math.random() * colors.length);
+
+                                // Get the color at the random index
+                                const randomColor = colors[randomIndex];
+                                $("#invitedList").append(
+                                    '<div class="avatar">' +
+                                        '<span class="avatar-title rounded-circle ' + randomColor + '">' + group.firstName.charAt(0).toUpperCase() + '</span>' +
+                                    '</div>'
+                                )
+                            }
+                            
+                        }
+                    } else {
+                        
+                    }
+                },
+            });
+        };
+        getInvitedList();
         //Timepicker
         $('.timepicker').timepicker({
             showInputs: false

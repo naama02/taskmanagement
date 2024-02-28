@@ -16,7 +16,8 @@ const createProject = async (req, res) => {
 
     try {
         const project = await Project.create(projectData);
-        project.ownerFirstname = 'owner';
+        const tprooject = await project.populate('owner');
+        project.ownerFirstname = tprooject.owner.firstName;
         return res.send({ status: "success", message: "Project successfully created", data: project })
     } catch (err) {
         console.log(err)
@@ -32,8 +33,9 @@ const projectView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     }).select('-__v');
+
     const project = await Project.findOne({ _id: req.params.projectId })
-    return res.render('project', { 'status': '', curPath: req.path, categories: categories, project: project })
+    return res.render('project', { 'status': '', curPath: req.path, categories: categories, project: project, currentUser: req.user._id })
 }
 
 const projectDelete = async (req, res) => {
@@ -74,6 +76,7 @@ const projectList = async (req, res) => {
             _id: project._id,
             name: project.name,
             ownerFirstname: project.owner.firstName,
+            ownerPhoto: project.owner.ownerPhoto,
             groups: project.groups,
             master: project.owner._id.equals(req.user._id) ? 'owner' : 'group'
         }));

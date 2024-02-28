@@ -1,13 +1,29 @@
 const bcrypt = require('bcrypt');
 const { registerValidation } = require("../utils/validation");
 const User = require('../models/User');
+const { decodeInvitationToken } = require('../utils/util');
+const Project = require('../models/Project');
 
 const saltLength = 10;
 
 const registerView = (req, res) => {
-    res.render('register', {
-        status: ''
-    });
+    const inviteToken = req.query.inviteToken;
+    if (inviteToken) {
+        const decodedToken = decodeInvitationToken(inviteToken);
+        const { userId, projectId, invitedEmail } = decodedToken;
+        res.render('register', {
+            status: '',
+            projectId: projectId,
+            invitedEmail: invitedEmail
+        });
+    } else {
+        res.render('register', {
+            status: '',
+            projectId: '',
+            invitedEmail: ''
+        });
+    }
+    
 }
 
 const register = async (req, res) => {
@@ -39,7 +55,23 @@ const register = async (req, res) => {
     }
 
     try {
-        await User.create(userData);
+        const user = await User.create(userData);
+
+        if (req.body.projectId) {
+            const project = await Project.findById(req.body.projectId);
+            // Check if the 'groups' field exists in the project
+            if (project.groups) {
+                // Check if the userId is already included in the 'groups' array
+                if (!project.groups.includes(user._id)) {
+                    // Append the userId to the 'groups' array
+                    project.groups.push(user._id);
+                }
+            } else {
+                // If the 'groups' field doesn't exist, create it and add the userId
+                project.groups = [user._id];
+            }
+            await project.save();
+        }
         
         return res.send({ status: "success", message: "User successfully registered" })
     } catch (err) {

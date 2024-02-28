@@ -1,21 +1,8 @@
 const Task = require("../models/Task")
 const Event = require("../models/Event");
-const Category = require("../models/Category");
 const moment = require("moment");
 const { ObjectId } = require('mongodb');
 const Project = require("../models/Project");
-
-// const dashboard = async (req, res) => {
-//     const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
-//     const categories = await Category.find(searchFilter).select('-__v');
-
-//     return res.render('dashboard', {
-//         status: '',
-//         curPath: req.path,
-//         categories: categories
-//     })
-    
-// }
 
 const dashboard = async (req, res) => {
     return res.render('dashboard', {
@@ -26,7 +13,6 @@ const dashboard = async (req, res) => {
 }
 
 const dashboardSchedule = async (req, res) => {
-    const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
     const { project }= req.body;
     let projectFilter = {};
     const projectData = await Project.findById(project);
@@ -36,8 +22,8 @@ const dashboardSchedule = async (req, res) => {
         projectFilter = { project: project, type: 'group' };
     }
 
-    const tasks = await Task.find({ ...searchFilter, ...projectFilter }).select('-__v');
-    const events = await Event.find({ ...searchFilter, ...projectFilter }).select('-__v');
+    const tasks = await Task.find(projectFilter).populate('project').select('-__v');
+    const events = await Event.find(projectFilter).populate('project').select('-__v');
     let scheduleEvents = [];
 
     for (var task of tasks) {

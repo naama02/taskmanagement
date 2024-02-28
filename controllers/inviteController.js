@@ -52,9 +52,22 @@ const inviteView = async (req, res) => {
         console.log(decodedToken)
         const userExists = await User.findOne({ email: invitedEmail });
         if (userExists) {
-
+            const project = await Project.findById(projectId);
+            // Check if the 'groups' field exists in the project
+            if (project.groups) {
+                // Check if the userId is already included in the 'groups' array
+                if (!project.groups.includes(userExists._id)) {
+                    // Append the userId to the 'groups' array
+                    project.groups.push(userExists._id);
+                }
+            } else {
+                // If the 'groups' field doesn't exist, create it and add the userId
+                project.groups = [userExists._id];
+            }
+            await project.save();
+            return res.redirect(`/dashboard`);
         } else {
-            return res.redirect(`/register?token=${inviteToken}`);
+            return res.redirect(`/register?inviteToken=${inviteToken}`);
         }
         // Proceed with the invitation process
         // res.render('invitation', { userId, projectId, invitedEmail });
@@ -63,7 +76,22 @@ const inviteView = async (req, res) => {
     }
 }
 
+const inviteList = async (req, res) => {
+    const { projectId } = req.body;
+    try {
+        const project = await Project.findById(projectId).populate({
+            path: 'groups',
+        })
+    
+        return res.send({ status: "success", projectGroups: project.groups })
+    } catch (err) {
+        return res.send({ status: "error", message: err.message })
+    }
+    
+}
+
 module.exports = {
     inviteUser,
-    inviteView
+    inviteView,
+    inviteList,
 }
