@@ -8,6 +8,7 @@ const dashboard = async (req, res) => {
     return res.render('dashboard', {
         status: '',
         curPath: req.path,
+        curUserRole: req.user.role
     })
     
 }

@@ -27,6 +27,15 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/atmos.min.css">
     <!-- Additional library for page -->
     <link rel="stylesheet" href="../assets/vendor/fullcalender/fullcalendar.min.css">
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/popper/popper.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/select2/js/select2.full.min.js"></script>
+    <script src="../assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../assets/vendor/listjs/listjs.min.js"></script>
+    <script src="../assets/vendor/moment/moment.min.js"></script>
+    
 </head>
 
 <body class="sidebar-pinned ">
@@ -258,25 +267,14 @@
         </div>
     </div>
     <!-- Modal Ends -->
-
-    <script src="../assets/vendor/jquery/jquery.min.js"></script>
-    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
-    <script src="../assets/vendor/popper/popper.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../assets/vendor/select2/js/select2.full.min.js"></script>
-    <script src="../assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-    <script src="../assets/vendor/listjs/listjs.min.js"></script>
-    <script src="../assets/vendor/moment/moment.min.js"></script>
     <script src="../assets/vendor/daterangepicker/daterangepicker.js"></script>
     <script src="../assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="../assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
     <script src="../assets/js/atmos.min.js"></script>
     <script src="../assets/vendor/timepicker/bootstrap-timepicker.min.js"></script>
-    <!--page specific scripts for demo-->
-
-    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
     <script src="../assets/vendor/fullcalender/fullcalendar.min.js"></script>
     <script src="../assets/js/form-validate.js"></script>
+    
     <script>
         var date = new Date()
         var d = date.getDate(),
@@ -328,6 +326,90 @@
                             $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
 
                         },
+                        eventClick: function(calEvent, jsEvent, view) {
+                            window.location = calEvent.deadline ? `/edit-task/${calEvent.id}` : `/edit-event/${calEvent.id}`;
+                        },
+                        eventRender: function(event, element) {
+                            var fcContent = element.find('.fc-content');
+                            // Add CSS styles to the fc-content element
+                            fcContent.css({
+                                'display': 'flex',
+                                'justify-content': 'space-between'
+                            });
+
+                            // Append the close button to the fc-content element
+                            fcContent.append("<span class='closeon' style='margin-left: 10px;'>X</span>");
+                            const eventUrl = event.deadline ? '/task-delete' : '/event-delete'
+                            const eData = event.deadline ? {
+                                taskId: event.id
+                            } : {
+                                eventId: event.id
+                            }
+                            // Add a click event handler to the close button to remove the event
+                            fcContent.find(".closeon").click(function() {
+                                $('#calendar').fullCalendar('removeEvents', event._id);
+                                $.ajax({
+                                    url: eventUrl,
+                                    type: 'POST',
+                                    data: eData,
+                                    success: function (result) {
+                                        if (result.status == "success") {
+                                            $.notify({
+                                                // options
+                                                icon: 'mdi mdi-alert',
+                                                title: 'Alert',
+                                                message: result.message
+                                            }, {
+                                                placement: {
+                                                    align: "right",
+                                                    from: "top"
+                                                },
+                                                showProgressbar: true,
+                                                timer: 500,
+                                                // settings
+                                                type: 'success',
+                                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                    '<div class="progress" data-notify="progressbar">' +
+                                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                    '</div>' +
+                                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                            });
+                                        } else {
+                                            $.notify({
+                                                // options
+                                                icon: 'mdi mdi-alert',
+                                                title: 'Alert',
+                                                message: result.message
+                                            }, {
+                                                placement: {
+                                                    align: "right",
+                                                    from: "top"
+                                                },
+                                                showProgressbar: true,
+                                                timer: 500,
+                                                // settings
+                                                type: 'danger',
+                                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                    '<div class="progress" data-notify="progressbar">' +
+                                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                    '</div>' +
+                                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                            });
+                                        }
+                                    },
+                                });
+                            });
+                        },
                         eventDrop: function(info) {
                             const date = moment(info.start.format()).format("YYYY-MM-DD");
                             const time = moment(info.start.format()).format("hh:mm A");
@@ -335,7 +417,6 @@
                                 date: date,
                                 hour: time,
                             }
-                            console.log(info)
                             let url = info.location ? `/update-event-date/${info.id}` : `/update-task-date/${info.id}`
                             $.ajax({
                                 url: url,

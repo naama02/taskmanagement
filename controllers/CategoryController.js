@@ -30,7 +30,7 @@ const categoryListView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     });
-    return res.render('categoryList', { 'status': '', curPath: req.path, categories: categories })
+    return res.render('categoryList', { 'status': '', curPath: req.path, categories: categories, curUserRole: req.user.role })
 }
 
 const categoryDelete = async (req, res) => {
@@ -50,6 +50,7 @@ const categoryUpdateView = async (req, res) => {
         status: '',
         category: category,
         curPath: req.path,
+        curUserRole: req.user.role
     });
 }
 

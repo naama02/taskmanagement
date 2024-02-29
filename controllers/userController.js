@@ -7,11 +7,11 @@ const saltLength = 10;
 
 const userListView = async (req, res) => {   
     const users = await User.find();
-    return res.render('userList', { 'status': '', curPath: req.path, users: users })
+    return res.render('userList', { 'status': '', curPath: req.path, users: users, curUserRole: req.user.role })
 }
 
 const userCreateView = async (req, res) => {   
-    return res.render('createUser', { 'status': '', curPath: req.path })
+    return res.render('createUser', { 'status': '', curPath: req.path, curUserRole: req.user.role, curUserRole: req.user.role })
 }
 
 const createUser = async (req, res) => {

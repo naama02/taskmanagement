@@ -10,23 +10,27 @@
     <title>Task Management | Dashboard</title>
     <link rel="icon" type="image/x-icon" href="assets/img/logo.png" />
     <link rel="icon" href="assets/img/logo.png" type="image/png" sizes="16x16">
-    <link rel="stylesheet" href="assets/vendor/pace/pace.css">
-    <script src="assets/vendor/pace/pace.min.js"></script>
     <!--vendors-->
     <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" type="text/css" href="assets/vendor/jquery-scrollbar/jquery.scrollbar.css">
     <link rel="stylesheet" href="assets/vendor/select2/css/select2.min.css">
     <link rel="stylesheet" href="assets/vendor/jquery-ui/jquery-ui.min.css">
-    <link rel="stylesheet" href="assets/vendor/daterangepicker/daterangepicker.css">
-    <link rel="stylesheet" href="assets/vendor/timepicker/bootstrap-timepicker.min.css">
     <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
     <link rel="stylesheet" href="assets/fonts/jost/jost.css">
     <!--Material Icons-->
     <link rel="stylesheet" type="text/css" href="assets/fonts/materialdesignicons/materialdesignicons.min.css">
     <!--Bootstrap + atmos Admin CSS-->
     <link rel="stylesheet" type="text/css" href="assets/css/atmos.min.css">
-    <!-- Additional library for page -->
-    <link rel="stylesheet" href="assets/vendor/fullcalender/fullcalendar.min.css">
+
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="assets/vendor/popper/popper.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="assets/vendor/listjs/listjs.min.js"></script>
+    <script src="assets/vendor/moment/moment.min.js"></script>
+    <script src="assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script src="assets/js/form-validate.js"></script>
 </head>
 
 <body class="sidebar-pinned ">
@@ -78,16 +82,6 @@
         </div>
     </div>
     <!-- Modal Ends -->
-    <script src="assets/vendor/jquery/jquery.min.js"></script>
-    <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
-    <script src="assets/vendor/popper/popper.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-    <script src="assets/vendor/listjs/listjs.min.js"></script>
-    <script src="assets/vendor/moment/moment.min.js"></script>
-    <script src="assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
-    <script src="assets/js/form-validate.js"></script>
-
     <script>
 
         function getProjects() {
@@ -98,7 +92,6 @@
                 data: {},
                 success: function (result) {
                     if (result.status == "success") {
-                        console.log(result)
                         for (var project of result.projects) {
                             $("#project_card").append('<div class="col-md-3 m-b-30">' +
                                 '<a href="/project/' + project._id + '">' +
@@ -155,7 +148,6 @@
         });
 
         $("#create_project_btn").on('click', function(e) {
-            console.log($("#projectName").val())
             var form = $("#createProjectForm");
             if (form[0].checkValidity() === false) {
                 e.preventDefault();
@@ -171,15 +163,14 @@
                     name: $("#projectName").val()
                 },
                 success: function (result) {
-                    console.log(result)
                     if (result.status == "success") {
                         $("#project_card").append('<div class="col-md-3 m-b-30">' +
                                 '<a href="/project/' + result.data._id + '">' +
                                 '<div class="card">' +
                                     '<div class="card-body">' +
                                         '<div class="card-controls">' +
-                                            '<div class="avatar" style="height: 25px; width: 25px;" data-toggle="tooltip" title="' + result.data.ownerFirstname + '">' +
-                                                '<span class="avatar-title rounded-circle bg-primary">' + result.data.ownerFirstname.charAt(0).toUpperCase() + '</span>' +
+                                            '<div class="avatar" style="height: 25px; width: 25px;" data-toggle="tooltip" title="' + result.data.owner.firstName + '">' +
+                                                '<span class="avatar-title rounded-circle bg-primary">' + result.data.owner.firstName.charAt(0).toUpperCase() + '</span>' +
                                                 '<img src="../assets/img/users/user-1.jpg" alt="..." class="avatar-img rounded-circle" style="height:25px; width: 25px;">' +
                                             '</div>' +
                                         '</div>' +
