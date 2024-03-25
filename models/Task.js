@@ -40,9 +40,9 @@ const taskSchema = new mongoose.Schema({
         ref: 'Category',
         required: true,
     },
-    project: {
+    calendar: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project',
+        ref: 'Calendar',
         required: true,
     },
     type: {

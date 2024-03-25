@@ -1,14 +1,18 @@
 const Event = require("../models/Event");
 const moment = require("moment");
 const { ObjectId } = require('mongodb');
-const Project = require("../models/Project");
+const Calendar = require("../models/Calendar");
 const Category = require("../models/Category");
 
-const createEvent = async (req, res) => {   
+const createEvent = async (req, res) => { 
+    const checkExists = await Event.findOne({ date: req.body.date, hour: req.body.hour });
+    if (checkExists) {
+        return res.send({ status: "error", message: "Event already exists with same date and hour." });
+    }  
     // check for unique event
     const eventExists = await Event.findOne({ title: req.body.title });
     if (eventExists) { 
-        return res.send({ status: "error", message: "event already exists" }); 
+        return res.send({ status: "error", message: "Event already exists" }); 
     }
 
     const eventData = {
@@ -21,7 +25,7 @@ const createEvent = async (req, res) => {
         user: req.user._id,
         color: req.body.color,
         category: req.body.category,
-        project: req.body.project,
+        calendar: req.body.calendar,
         type: req.body.type,
     }
 
@@ -67,7 +71,7 @@ const eventCreateView = async (req, res) => {
     if (req.user.role === 'admin') {
         query = {};
     }
-    const projects = await Project.find(query);
+    const calendars = await Calendar.find(query);
     const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
     const categories = await Category.find(searchFilter).populate({
         path: 'user',
@@ -75,7 +79,7 @@ const eventCreateView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     }).select('-__v');   
-    return res.render('createEvent', { 'status': '', curPath: req.path, projects: projects, categories: categories, curUserRole: req.user.role })
+    return res.render('createEvent', { 'status': '', curPath: req.path, calendars: calendars, categories: categories, curUserRole: req.user.role })
 }
 
 const eventUpdateView = async (req, res) => {
@@ -87,9 +91,9 @@ const eventUpdateView = async (req, res) => {
     };
 
     if (req.user.role === 'admin') {
-        query = {}; // Fetch all projects for admin
+        query = {}; // Fetch all calendars for admin
     }
-    const projects = await Project.find(query);
+    const calendars = await Calendar.find(query);
     const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
     const categories = await Category.find(searchFilter).populate({
         path: 'user',
@@ -103,7 +107,7 @@ const eventUpdateView = async (req, res) => {
         event: event,
         curPath: req.path,
         moment: moment,
-        projects: projects, 
+        calendars: calendars, 
         categories: categories,
         curUserRole: req.user.role
     });
@@ -122,7 +126,7 @@ const updateEvent = async (req, res) => {
             color: req.body.color,
             type: req.body.type,
             category: req.body.category,
-            project: req.body.project,
+            calendar: req.body.calendar,
         }
     } else {
         eventData = {
@@ -134,7 +138,7 @@ const updateEvent = async (req, res) => {
             color: req.body.color,
             type: req.body.type,
             category: req.body.category,
-            project: req.body.project,
+            calendar: req.body.calendar,
         }
     }
 

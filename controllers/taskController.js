@@ -1,10 +1,14 @@
 const Task = require("../models/Task");
 const moment = require("moment");
 const { ObjectId } = require('mongodb');
-const Project = require("../models/Project");
+const Calendar = require("../models/Calendar");
 const Category = require("../models/Category");
 
 const createTask = async (req, res) => {
+    const checkExists = await Task.findOne({ date: req.body.date, hour: req.body.hour });
+    if (checkExists) {
+        return res.send({ status: "error", message: "Task already exists with same date and hour." });
+    }
     // check for unique task
     const taskExists = await Task.findOne({ title: req.body.title });
     if (taskExists) {
@@ -21,7 +25,7 @@ const createTask = async (req, res) => {
         user: req.user._id,
         color: req.body.color,
         category: req.body.category,
-        project: req.body.project,
+        calendar: req.body.calendar,
         type: req.body.type,
     }
 
@@ -79,9 +83,9 @@ const taskCreateView = async (req, res) => {
     };
 
     if (req.user.role === 'admin') {
-        query = {}; // Fetch all projects for admin
+        query = {}; // Fetch all calendars for admin
     }
-    const projects = await Project.find(query);
+    const calendars = await Calendar.find(query);
     const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
     const categories = await Category.find(searchFilter).populate({
         path: 'user',
@@ -89,7 +93,7 @@ const taskCreateView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     }).select('-__v');
-    return res.render('createTask', { 'status': '', curPath: req.path, projects: projects, categories: categories, curUserRole: req.user.role })
+    return res.render('createTask', { 'status': '', curPath: req.path, calendars: calendars, categories: categories, curUserRole: req.user.role })
 }
 
 const taskUpdateView = async (req, res) => {
@@ -101,9 +105,9 @@ const taskUpdateView = async (req, res) => {
     };
 
     if (req.user.role === 'admin') {
-        query = {}; // Fetch all projects for admin
+        query = {}; // Fetch all calendars for admin
     }
-    const projects = await Project.find(query);
+    const calendars = await Calendar.find(query);
     const searchFilter = req.user.role == 'user' ? { user: req.user._id } : {}
     const categories = await Category.find(searchFilter).populate({
         path: 'user',
@@ -118,7 +122,7 @@ const taskUpdateView = async (req, res) => {
         task: task,
         curPath: req.path,
         moment: moment,
-        projects: projects, 
+        calendars: calendars, 
         categories: categories,
         curUserRole: req.user.role
     });
@@ -137,7 +141,7 @@ const updateTask = async (req, res) => {
             color: req.body.color,
             type: req.body.type,
             category: req.body.category,
-            project: req.body.project,
+            calendar: req.body.calendar,
         }
     } else {
         taskData = {
@@ -149,7 +153,7 @@ const updateTask = async (req, res) => {
             color: req.body.color,
             type: req.body.type,
             category: req.body.category,
-            project: req.body.project,
+            calendar: req.body.calendar,
         }
     }
 

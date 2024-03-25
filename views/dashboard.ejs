@@ -50,31 +50,31 @@
             <div class="container pull-up">
                 <div class="row">
                     <div class="col-md-12 m-auto text-white">
-                        <a href="javascript:void(0);" class="btn m-b-15 ml-2 mr-2 btn-primary" id="create_project">Create Project</a>
+                        <a href="javascript:void(0);" class="btn m-b-15 ml-2 mr-2 btn-primary" id="create_calendar">New Calendar</a>
                     </div>
                 </div>
-                <div class="row" id="project_card"></div>
+                <div class="row" id="calendar_card"></div>
 
             </div>
         </section>
     </main>
     <!-- Modal -->
-    <div class="modal fade" id="createProjectModal" aria-labelledby="createProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="createCalendarModal" aria-labelledby="createCalendarModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
             <div class="modal-content m-t-80">
                 <div class="modal-body">
-                    <form class="needs-validation" id="createProjectForm" method="POST" action=""
+                    <form class="needs-validation" id="createCalendarForm" method="POST" action=""
                     novalidate>
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label for="name">Project Name</label>
-                                <input type="text" class="form-control" id="projectName" required />
+                                <label for="name">Calendar Name</label>
+                                <input type="text" class="form-control" id="calendarName" required />
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer ">
-                    <a href="javascript:void(0);" class="btn btn-primary" id="create_project_btn">OK</a>
+                    <a href="javascript:void(0);" class="btn btn-primary" id="create_calendar_btn">OK</a>
                     <a href="javascript:void(0);" class="btn btn-secondary" data-dismiss="modal"
                         aria-label="Close">cancel</a>
                 </div>
@@ -84,26 +84,26 @@
     <!-- Modal Ends -->
     <script>
 
-        function getProjects() {
-            $("#project_card").html('');
+        function getCalendars() {
+            $("#calendar_card").html('');
             $.ajax({
-                url: '/projects',
+                url: '/calendars',
                 type: 'POST',
                 data: {},
                 success: function (result) {
                     if (result.status == "success") {
-                        for (var project of result.projects) {
-                            $("#project_card").append('<div class="col-md-3 m-b-30">' +
-                                '<a href="/project/' + project._id + '">' +
+                        for (var calendar of result.calendars) {
+                            $("#calendar_card").append('<div class="col-md-3 m-b-30">' +
+                                '<a href="/calendar/' + calendar._id + '">' +
                                 '<div class="card">' +
                                     '<div class="card-body">' +
                                         '<div class="card-controls">' +
-                                            '<div class="avatar" style="height: 25px; width: 25px;" data-toggle="tooltip" title="' + project.ownerFirstname + '">' +
-                                                '<span class="avatar-title rounded-circle bg-primary">' + project.ownerFirstname.charAt(0).toUpperCase() + '</span>' +
+                                            '<div class="avatar" style="height: 25px; width: 25px;" data-toggle="tooltip" title="' + calendar.ownerFirstname + '">' +
+                                                '<span class="avatar-title rounded-circle bg-primary">' + calendar.ownerFirstname.charAt(0).toUpperCase() + '</span>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div class="text-center p-t-40 p-b-30">' +
-                                            '<h2 class="text-success">' + project.name + '</h2>' +
+                                            '<h2 class="text-success">' + calendar.name + '</h2>' +
                                         '</div>' +
                                     '</div>' +
                                 '</div>' +
@@ -142,13 +142,13 @@
             });
         }
         
-        getProjects();
-        $("#create_project").on('click', function (e) {
-            $("#createProjectModal").modal('show');
+        getCalendars();
+        $("#create_calendar").on('click', function (e) {
+            $("#createCalendarModal").modal('show');
         });
 
-        $("#create_project_btn").on('click', function(e) {
-            var form = $("#createProjectForm");
+        $("#create_calendar_btn").on('click', function(e) {
+            var form = $("#createCalendarForm");
             if (form[0].checkValidity() === false) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -157,15 +157,15 @@
             }
 
             $.ajax({
-                url: '/create-project',
+                url: '/create-calendar',
                 type: 'POST',
                 data: {
-                    name: $("#projectName").val()
+                    name: $("#calendarName").val()
                 },
                 success: function (result) {
                     if (result.status == "success") {
-                        $("#project_card").append('<div class="col-md-3 m-b-30">' +
-                                '<a href="/project/' + result.data._id + '">' +
+                        $("#calendar_card").append('<div class="col-md-3 m-b-30">' +
+                                '<a href="/calendar/' + result.data._id + '">' +
                                 '<div class="card">' +
                                     '<div class="card-body">' +
                                         '<div class="card-controls">' +
@@ -181,7 +181,7 @@
                                 '</div>' +
                                 '</a>' +
                                 '</div>')
-                        $("#createProjectModal").modal('hide');
+                        $("#createCalendarModal").modal('hide');
                         
                     } else {
                         $.notify({

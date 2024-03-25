@@ -2,7 +2,8 @@ const bcrypt = require('bcrypt');
 const { registerValidation } = require("../utils/validation");
 const User = require('../models/User');
 const { decodeInvitationToken } = require('../utils/util');
-const Project = require('../models/Project');
+const Calendar = require('../models/Calendar');
+const Notification = require('../models/Notification');
 
 const saltLength = 10;
 
@@ -10,16 +11,16 @@ const registerView = (req, res) => {
     const inviteToken = req.query.inviteToken;
     if (inviteToken) {
         const decodedToken = decodeInvitationToken(inviteToken);
-        const { userId, projectId, invitedEmail } = decodedToken;
+        const { userId, calendarId, invitedEmail } = decodedToken;
         res.render('register', {
             status: '',
-            projectId: projectId,
+            calendarId: calendarId,
             invitedEmail: invitedEmail
         });
     } else {
         res.render('register', {
             status: '',
-            projectId: '',
+            calendarId: '',
             invitedEmail: ''
         });
     }
@@ -57,24 +58,24 @@ const register = async (req, res) => {
     try {
         const user = await User.create(userData);
 
-        if (req.body.projectId) {
-            const project = await Project.findById(req.body.projectId);
-            // Check if the 'groups' field exists in the project
-            if (project.groups) {
+        if (req.body.calendarId) {
+            const calendar = await Calendar.findById(req.body.calendarId);
+            // Check if the 'groups' field exists in the calendar
+            if (calendar.groups) {
                 // Check if the userId is already included in the 'groups' array
-                if (!project.groups.includes(user._id)) {
+                if (!calendar.groups.includes(user._id)) {
                     // Append the userId to the 'groups' array
-                    project.groups.push(user._id);
+                    calendar.groups.push(user._id);
                 }
             } else {
                 // If the 'groups' field doesn't exist, create it and add the userId
-                project.groups = [user._id];
+                calendar.groups = [user._id];
             }
-            await project.save();
+            await calendar.save();
             const notificationData = {
                 type: 'Invitation',
                 content: "You have received invitation",
-                sender: project.owner,
+                sender: calendar.owner,
                 receiver: user._id
             }
             await Notification.create(notificationData);

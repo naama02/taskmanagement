@@ -62,10 +62,10 @@
                                             novalidate>
                                             <div class="form-row">
                                                 <div class="form-group col-md-6">
-                                                    <label for="project">Project</label>
-                                                    <select class="form-control" id="project" required>
-                                                        <% projects.forEach(function(project) { %>
-                                                            <option value="<%= project._id %>"><%= project.name %></option>
+                                                    <label for="calendar">Calendar</label>
+                                                    <select class="form-control" id="calendar" required>
+                                                        <% calendars.forEach(function(calendar) { %>
+                                                            <option value="<%= calendar._id %>"><%= calendar.name %></option>
                                                         <% }) %>
                                                     </select>
                                                 </div>
@@ -259,7 +259,7 @@
                     date: $("#date").val(),
                     hour: $("#hour").val(),
                     location: $("#location").val(),
-                    project: $("#project").val(),
+                    calendar: $("#calendar").val(),
                     type: $("#type").val(),
                     category: $("#category").val(),
                     attachedFile: $("#eventFileURI").val(),

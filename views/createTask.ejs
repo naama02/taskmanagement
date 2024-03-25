@@ -62,10 +62,10 @@
                                             novalidate>
                                             <div class="form-row">
                                                 <div class="form-group col-md-6">
-                                                    <label for="project">Project</label>
-                                                    <select class="form-control" id="project" required>
-                                                        <% projects.forEach(function(project) { %>
-                                                            <option value="<%= project._id %>"><%= project.name %></option>
+                                                    <label for="calendar">Calendar</label>
+                                                    <select class="form-control" id="calendar" required>
+                                                        <% calendars.forEach(function(calendar) { %>
+                                                            <option value="<%= calendar._id %>"><%= calendar.name %></option>
                                                         <% }) %>
                                                     </select>
                                                     
@@ -232,6 +232,19 @@
         <script src="assets/js/form-validate.js"></script>
         
         <script>
+            const fullUrl = window.location.href;
+            // Create a URL object
+            const url = new URL(fullUrl);
+
+            // Get all the search parameters
+            const searchParams = new URLSearchParams(url.search);
+
+            // Access specific search parameters by name
+            const selectedDate = searchParams.get('selectedDate'); // 'shirt'
+            if (selectedDate) {
+                $("#date").val(moment(selectedDate).format('MM/DD/YYYY'));
+            }
+
             //Timepicker
             $('.timepicker').timepicker({
                 showInputs: false
@@ -262,7 +275,7 @@
                     date: $("#date").val(),
                     hour: $("#hour").val(),
                     deadline: $("#deadline").val(),
-                    project: $("#project").val(),
+                    calendar: $("#calendar").val(),
                     type: $("#type").val(),
                     category: $("#category").val(),
                     attachedFile: $("#eventFileURI").val(),

@@ -55,7 +55,7 @@ const eventRoute = require('./routes/event');
 const userRoute = require('./routes/users');
 const categoryRoute = require('./routes/category');
 const profileRoute = require('./routes/profile');
-const projectRoute = require('./routes/project');
+const calendarRoute = require('./routes/calendar');
 const inviteRoute = require('./routes/invite');
 const notificationRoute = require('./routes/notification');
 
@@ -70,7 +70,7 @@ app.use('', avatarRoute);
 app.use('', userRoute);
 app.use('', categoryRoute);
 app.use('', profileRoute);
-app.use('', projectRoute);
+app.use('', calendarRoute);
 app.use('', inviteRoute);
 app.use('', notificationRoute);
 

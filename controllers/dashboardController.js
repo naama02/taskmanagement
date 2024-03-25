@@ -2,7 +2,7 @@ const Task = require("../models/Task")
 const Event = require("../models/Event");
 const moment = require("moment");
 const { ObjectId } = require('mongodb');
-const Project = require("../models/Project");
+const Calendar = require("../models/Calendar");
 
 const dashboard = async (req, res) => {
     return res.render('dashboard', {
@@ -14,17 +14,17 @@ const dashboard = async (req, res) => {
 }
 
 const dashboardSchedule = async (req, res) => {
-    const { project }= req.body;
-    let projectFilter = {};
-    const projectData = await Project.findById(project);
-    if (projectData.owner == req.user._id) {
-        projectFilter = { project: project };
+    const { calendar }= req.body;
+    let calendarFilter = {};
+    const calendarData = await Calendar.findById(calendar);
+    if (calendarData.owner == req.user._id) {
+        calendarFilter = { calendar: calendar };
     } else {
-        projectFilter = { project: project, type: 'group' };
+        calendarFilter = { calendar: calendar, type: 'group' };
     }
 
-    const tasks = await Task.find(projectFilter).populate('project').select('-__v');
-    const events = await Event.find(projectFilter).populate('project').select('-__v');
+    const tasks = await Task.find(calendarFilter).populate('calendar').select('-__v');
+    const events = await Event.find(calendarFilter).populate('calendar').select('-__v');
     let scheduleEvents = [];
 
     for (var task of tasks) {

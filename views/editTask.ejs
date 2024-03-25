@@ -62,10 +62,10 @@
                                             novalidate>
                                             <div class="form-row">
                                                 <div class="form-group col-md-6">
-                                                    <label for="project">Project</label>
-                                                    <select class="form-control" id="project" required>
-                                                        <% projects.forEach(function(project) { %>
-                                                            <option value="<%= project._id %>" <% if (project._id.toString() == task.project.toString()) { %>selected<% } %>><%= project.name %></option>
+                                                    <label for="calendar">Calendar</label>
+                                                    <select class="form-control" id="calendar" required>
+                                                        <% calendars.forEach(function(calendar) { %>
+                                                            <option value="<%= calendar._id %>" <% if (calendar._id.toString() == task.calendar.toString()) { %>selected<% } %>><%= calendar.name %></option>
                                                         <% }) %>
                                                     </select>
                                                     
@@ -261,7 +261,7 @@
                     deadline: $("#deadline").val(),
                     attachedFile: $("#eventFileURI").val(),
                     color: currColor,
-                    project: $("#project").val(),
+                    calendar: $("#calendar").val(),
                     type: $("#type").val(),
                     category: $("#category").val(),
                 }

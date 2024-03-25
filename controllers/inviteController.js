@@ -1,8 +1,8 @@
 const sgMail = require('@sendgrid/mail');
 const User = require('../models/User');
-const Project = require('../models/Project');
 const { encodeInvitationToken, decodeInvitationToken } = require('../utils/util');
 const Notification = require('../models/Notification');
+const Calendar = require('../models/Calendar');
 sgMail.setApiKey(process.env.SENDGRID_APIKEY);
 
 const inviteUser = async (req, res) => {
@@ -10,18 +10,18 @@ const inviteUser = async (req, res) => {
     if (user.email == req.body.inviteEmail) {
         return res.status(400).send({ status: 'error', message: 'Provide correct Invitation Email' }) 
     }
-    const project = await Project.findById(req.body.projectId);
-    const projectName = project.name;
+    const calendar = await Calendar.findById(req.body.calendarId);
+    const calendarName = calendar.name;
     const inviterName = user.firstName + ' ' + user.lastName;
     const invitedName = req.body.inviteEmail;
     const serverUrl = process.env.SERVER_URL;
     const expiresIn = '1d';
-    const inviteToken = encodeInvitationToken(user._id, project._id, req.body.inviteEmail, expiresIn);
+    const inviteToken = encodeInvitationToken(user._id, calendar._id, req.body.inviteEmail, expiresIn);
     const inviteLink = `${serverUrl}/invite?inviteToken=${inviteToken}`;
 
     const htmlContent = `
         <p>Hi ${invitedName},</p>
-        <p>${inviterName} has invited you to collaborate on the <strong>${projectName}</strong> on Task Management.</p>
+        <p>${inviterName} has invited you to collaborate on the <strong>${calendarName}</strong> on Task Management.</p>
         <p>To accept the invitation, click the link below:</p>
         <a href="${inviteLink}" target="_blank">Accept Invitation</a>
         <p>Thank you!</p>
@@ -30,7 +30,7 @@ const inviteUser = async (req, res) => {
     const msg = {
         to: req.body.inviteEmail,
         from: process.env.SENDER_EMAIL,
-        subject: `${inviterName} has invited you to collaborate on ${projectName}`,
+        subject: `${inviterName} has invited you to collaborate on ${calendarName}`,
         html: htmlContent,
     };
 
@@ -49,23 +49,23 @@ const inviteView = async (req, res) => {
 
     if (decodedToken && new Date(decodedToken.exp * 1000) > Date.now()) {
         // Token is valid and not expired
-        const { userId, projectId, invitedEmail } = decodedToken;
+        const { userId, calendarId, invitedEmail } = decodedToken;
         console.log(decodedToken)
         const userExists = await User.findOne({ email: invitedEmail });
         if (userExists) {
-            const project = await Project.findById(projectId);
-            // Check if the 'groups' field exists in the project
-            if (project.groups) {
+            const calendar = await Calendar.findById(calendarId);
+            // Check if the 'groups' field exists in the calendar
+            if (calendar.groups) {
                 // Check if the userId is already included in the 'groups' array
-                if (!project.groups.includes(userExists._id)) {
+                if (!calendar.groups.includes(userExists._id)) {
                     // Append the userId to the 'groups' array
-                    project.groups.push(userExists._id);
+                    calendar.groups.push(userExists._id);
                 }
             } else {
                 // If the 'groups' field doesn't exist, create it and add the userId
-                project.groups = [userExists._id];
+                calendar.groups = [userExists._id];
             }
-            await project.save();
+            await calendar.save();
             const notificationData = {
                 type: 'Invitation',
                 content: "You have received invitation",
@@ -78,20 +78,20 @@ const inviteView = async (req, res) => {
             return res.redirect(`/register?inviteToken=${inviteToken}`);
         }
         // Proceed with the invitation process
-        // res.render('invitation', { userId, projectId, invitedEmail });
+        // res.render('invitation', { userId, calendarId, invitedEmail });
     } else {
         return res.status(400).send('Invalid or expired invitation link');
     }
 }
 
 const inviteList = async (req, res) => {
-    const { projectId } = req.body;
+    const { calendarId } = req.body;
     try {
-        const project = await Project.findById(projectId).populate({
+        const calendar = await Calendar.findById(calendarId).populate({
             path: 'groups',
         })
     
-        return res.send({ status: "success", projectGroups: project.groups })
+        return res.send({ status: "success", calendarGroups: calendar.groups })
     } catch (err) {
         return res.send({ status: "error", message: err.message })
     }

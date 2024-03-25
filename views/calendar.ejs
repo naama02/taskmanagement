@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Task Management | Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
+    <link rel="icon" href="../assets/img/logo.png" type="image/png" sizes="16x16">
+    <link rel="stylesheet" href="../assets/vendor/pace/pace.css">
+    <script src="../assets/vendor/pace/pace.min.js"></script>
+    <!--vendors-->
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" type="text/css" href="../assets/vendor/jquery-scrollbar/jquery.scrollbar.css">
+    <link rel="stylesheet" href="../assets/vendor/select2/css/select2.min.css">
+    <link rel="stylesheet" href="../assets/vendor/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="../assets/vendor/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="../assets/vendor/timepicker/bootstrap-timepicker.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/fonts/jost/jost.css">
+    <!--Material Icons-->
+    <link rel="stylesheet" type="text/css" href="../assets/fonts/materialdesignicons/materialdesignicons.min.css">
+    <!--Bootstrap + atmos Admin CSS-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/atmos.min.css">
+    <!-- Additional library for page -->
+    <link rel="stylesheet" href="../assets/vendor/fullcalender/fullcalendar.min.css">
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/popper/popper.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/select2/js/select2.full.min.js"></script>
+    <script src="../assets/vendor/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../assets/vendor/listjs/listjs.min.js"></script>
+    <script src="../assets/vendor/moment/moment.min.js"></script>
+    
+</head>
+
+<body class="sidebar-pinned ">
+    <%- include('partials/sidebar.ejs') %>
+    <main class="admin-main">
+        <%- include('partials/header.ejs') %>
+        <section class="admin-content">
+            <div class="bg-dark m-b-30">
+                <div class="container">
+                    <div class="row p-b-60 p-t-60">
+
+                        <div class="col-md-8 m-auto text-white p-b-30">
+
+                            <h1> <%= calendar.name %> </h1>
+                        </div>
+                        <div class="col-md-4 m-auto text-white p-b-30">
+                            <div class="text-md-right">
+
+                                <p class="opacity-75">Calender is shared with</p>
+                                <div class="avatar-group">
+                                    <div id="invitedList"></div>
+                                    <a href="javascript:void(0);" class="avatar" id="invite_user">
+                                        <span class="avatar-title rounded-circle bg-info mdi mdi-plus"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="container pull-up">
+                <div class="row">
+                    <div class="col-lg-3 m-b-30">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="card-title" id="task_event_title">Create Task</div>
+                                    <div class=" m-b-0">
+                                        <label class="cstm-switch">
+                                            <input type="checkbox" name="option" value="task"
+                                                class="cstm-switch-input" checked>
+                                            <span class="cstm-switch-indicator "></span>
+                                            <span class="cstm-switch-description">Task</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-body">
+                                <form class="needs-validation" id="createTaskEventForm" method="POST" action=""
+                                    novalidate>
+                                    <div class="m-b-10">
+                                        <input id="new_event" type="text" class="form-control"
+                                            placeholder="Title" required />
+                                    </div>
+                                    <div class="m-b-10">
+                                        <textarea id="description" type="text" class="form-control" rows="4"
+                                            placeholder="Description" required></textarea>
+                                    </div>
+                                    <div class="m-b-10">
+                                        <input type="text" id="date" class="js-datepicker form-control"
+                                            placeholder="Select a Date" required />
+                                    </div>
+                                    <div class="m-b-10">
+                                        <input type="text" id="time" class="timepicker form-control" required />
+                                    </div>
+                                    <div class="m-b-10" id="deadlineInput" style="display: none;">
+                                        <input id="deadline" type="text" class="form-control"
+                                            placeholder="Dealine" required />
+                                    </div>
+                                    <div class="m-b-10" id="locationInput">
+                                        <input id="location" type="text" class="form-control"
+                                            placeholder="Location" required />
+                                    </div>
+                                    <div class="m-b-10">
+                                        <select id="category" class="form-control js-select2" required>
+                                            <% categories.forEach(function(category) { %>
+                                                <option value="<%= category._id %>"><%= category.name %></option>
+                                            <% }) %>
+                                        </select>
+                                        <div class="invalid-feedback">Please select Category</div>
+                                        <a href="javascript:void(0);" id="create_category"
+                                            style="color: #687ae8; font-size: 12px; text-decoration: underline; cursor: pointer;">Create
+                                            New Category</a>
+                                    </div>
+                                    <div class="m-b-10">
+                                        <select id="type" class="form-control" required>
+                                            <% if (calendar.owner.toString() == currentUser.toString()) { %>
+                                            <option value="personal">Personal</option>
+                                            <% } %>
+                                            <option value="group">Group</option>
+                                        </select>
+                                    </div>
+                                    <div class="m-b-10">
+                                        <div class="font-secondary">File Uploads</div>
+                                        <div class="input-group mb-3">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="uploadFile"
+                                                    accept="image/*, .pdf">
+                                                <label class="custom-file-label"
+                                                    for="uploadFile">Choose...</label>
+                                            </div>
+                                            <input type="hidden" id="eventFileURI" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div class="avatar-title text-white  js-event-color  rounded-circle">
+                                        </div>
+                                    </div>
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-primary rounded-circle">
+                                        </div>
+                                    </div>
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-secondary rounded-circle">
+                                        </div>
+                                    </div>
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-success rounded-circle">
+                                        </div>
+                                    </div>
+
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-danger rounded-circle">
+                                        </div>
+                                    </div>
+
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-warning rounded-circle">
+                                        </div>
+                                    </div>
+
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-info rounded-circle">
+                                        </div>
+                                    </div>
+
+                                    <div class="avatar avatar-xs m-r-5 ">
+                                        <div
+                                            class="avatar-title text-white  js-event-color  bg-dark rounded-circle">
+                                        </div>
+                                    </div>
+
+                                    <div class="m-t-10">
+                                        <button id="add_new_event" type="button"
+                                            class="btn btn-primary btn-block">Create
+                                            Task
+                                        </button>
+                                    </div>
+                                </form>
+                
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-9 m-b-30">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createCategoryModal" aria-labelledby="createCategoryModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content m-t-80">
+                <div class="modal-body">
+                    <form class="needs-validation" id="createCategoryForm" method="POST" action=""
+                    novalidate>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="name">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" required />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer ">
+                    <a href="javascript:void(0);" class="btn btn-primary" id="create_category_btn">OK</a>
+                    <a href="javascript:void(0);" class="btn btn-secondary" data-dismiss="modal"
+                        aria-label="Close">cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Ends -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="inviteModal" aria-labelledby="inviteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content m-t-80">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Invite</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="inviteForm" method="POST" action=""
+                    novalidate>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="name">Invite Email</label>
+                                <input type="email" class="form-control" id="inviteEmail" required />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer ">
+                    <a href="javascript:void(0);" class="btn btn-primary" id="invite_btn">Invite</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Ends -->
+    <script src="../assets/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="../assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="../assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script src="../assets/js/atmos.min.js"></script>
+    <script src="../assets/vendor/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="../assets/vendor/fullcalender/fullcalendar.min.js"></script>
+    <script src="../assets/js/form-validate.js"></script>
+    
+    <script>
+        var date = new Date()
+        var d = date.getDate(),
+            m = date.getMonth(),
+            y = date.getFullYear()
+        let eventScheduleData = [];
+
+        function getDashboardSchedule() {
+            $.ajax({
+                url: '/dashboard-schedule',
+                type: 'POST',
+                data: {
+                    calendar: '<%= calendar._id %>'
+                },
+                success: function (result) {
+                    eventScheduleData = result.scheduleEvents;
+                    $('#calendar').fullCalendar({
+                        themeSystem: 'bootstrap4',
+                        header: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'month,agendaWeek,agendaDay'
+                        },
+                        bootstrapFontAwesome: {
+                            close: ' mdi mdi-close',
+                            prev: ' mdi mdi-arrow-left',
+                            next: ' mdi mdi-arrow-right',
+                            prevYear: ' mdi mdi-chevron-double-left',
+                            nextYear: ' mdi mdi-chevron-double-right'
+                        },
+                        buttonText: {
+                            today: 'today',
+                            month: 'month',
+                            week: 'week',
+                            day: 'day'
+                        },
+                        //Random default events
+                        events: eventScheduleData,
+                        editable: true,
+                        droppable: true, 
+                        drop: function (date, allDay) {
+                            var originalEventObject = $(this).data('eventObject');
+                            var copiedEventObject = $.extend({}, originalEventObject);
+                            copiedEventObject.start = date;
+                            copiedEventObject.allDay = allDay;
+                            copiedEventObject.backgroundColor = $(this).css('background-color');
+                            copiedEventObject.borderColor = $(this).css('border-color');
+
+                            $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+
+                        },
+                        eventClick: function(calEvent, jsEvent, view) {
+                            window.location = calEvent.deadline ? `/edit-task/${calEvent.id}` : `/edit-event/${calEvent.id}`;
+                        },
+                        dayClick: function(info) {
+                            const selectedDate = moment(info._d).format("YYYY-MM-DD");
+                            window.location = $(".cstm-switch-input").val() === "task" ? `/create-task?selectedDate=${selectedDate}` : `/create-event?selectedDate=${selectedDate}`;
+                        },
+                        eventRender: function(event, element) {
+                            var fcContent = element.find('.fc-content');
+                            // Add CSS styles to the fc-content element
+                            fcContent.css({
+                                'display': 'flex',
+                                'justify-content': 'space-between'
+                            });
+
+                            // Append the close button to the fc-content element
+                            fcContent.append("<span class='closeon' style='margin-left: 10px;'>X</span>");
+                            const eventUrl = event.deadline ? '/task-delete' : '/event-delete'
+                            const eData = event.deadline ? {
+                                taskId: event.id
+                            } : {
+                                eventId: event.id
+                            }
+                            // Add a click event handler to the close button to remove the event
+                            fcContent.find(".closeon").click(function() {
+                                $('#calendar').fullCalendar('removeEvents', event._id);
+                                $.ajax({
+                                    url: eventUrl,
+                                    type: 'POST',
+                                    data: eData,
+                                    success: function (result) {
+                                        if (result.status == "success") {
+                                            $.notify({
+                                                // options
+                                                icon: 'mdi mdi-alert',
+                                                title: 'Alert',
+                                                message: result.message
+                                            }, {
+                                                placement: {
+                                                    align: "right",
+                                                    from: "top"
+                                                },
+                                                showProgressbar: true,
+                                                timer: 500,
+                                                // settings
+                                                type: 'success',
+                                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                    '<div class="progress" data-notify="progressbar">' +
+                                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                    '</div>' +
+                                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                            });
+                                        } else {
+                                            $.notify({
+                                                // options
+                                                icon: 'mdi mdi-alert',
+                                                title: 'Alert',
+                                                message: result.message
+                                            }, {
+                                                placement: {
+                                                    align: "right",
+                                                    from: "top"
+                                                },
+                                                showProgressbar: true,
+                                                timer: 500,
+                                                // settings
+                                                type: 'danger',
+                                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                    '<div class="progress" data-notify="progressbar">' +
+                                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                    '</div>' +
+                                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                            });
+                                        }
+                                    },
+                                });
+                            });
+                        },
+                        eventDrop: function(info) {
+                            const date = moment(info.start.format()).format("YYYY-MM-DD");
+                            const time = moment(info.start.format()).format("hh:mm A");
+                            const data = {
+                                date: date,
+                                hour: time,
+                            }
+                            let url = info.location ? `/update-event-date/${info.id}` : `/update-task-date/${info.id}`
+                            $.ajax({
+                                url: url,
+                                type: 'PUT',
+                                data: data,
+                                success: function (result) {
+                                    if (result.status == "success") {
+                                        $.notify({
+                                            // options
+                                            icon: 'mdi mdi-heart',
+                                            title: 'Alert',
+                                            message: result.message
+                                        }, {
+                                            placement: {
+                                                align: "right",
+                                                from: "top"
+                                            },
+                                            showProgressbar: true,
+                                            timer: 500,
+                                            // settings
+                                            type: 'success',
+                                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                '<div class="progress" data-notify="progressbar">' +
+                                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                '</div>' +
+                                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                        });
+                                    } else {
+                                        $.notify({
+                                            // options
+                                            icon: 'mdi mdi-alert',
+                                            title: 'Alert',
+                                            message: result.message
+                                        }, {
+                                            placement: {
+                                                align: "right",
+                                                from: "top"
+                                            },
+                                            showProgressbar: true,
+                                            timer: 500,
+                                            // settings
+                                            type: 'danger',
+                                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                '<div class="progress" data-notify="progressbar">' +
+                                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                '</div>' +
+                                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                        });
+                                    }
+                                },
+                            });
+                        }
+                    });
+                },
+            });
+        }
+        getDashboardSchedule();
+
+        function getInvitedList() {
+            $.ajax({
+                url: '/invite-list',
+                type: 'POST',
+                data: {
+                    calendarId: '<%= calendar._id %>'
+                },
+                success: function (result) {
+                    if (result.status == "success") {
+                        const colors = ['bg-primary', 'bg-danger', 'bg-dark', 'bg-success', 'bg-info'];
+                        for (var group of result.calendarGroups) {
+                            if (group.photo) {
+                                $("#invitedList").append(
+                                    '<div class="avatar">' +
+                                        '<img src="' + group.photo + '" alt="..." class="avatar-img rounded-circle" data-toggle="tooltip" title="' + group.firstName + '">' +
+                                    '</div>'
+                                )
+                            } else {
+                                const randomIndex = Math.floor(Math.random() * colors.length);
+
+                                // Get the color at the random index
+                                const randomColor = colors[randomIndex];
+                                $("#invitedList").append(
+                                    '<div class="avatar">' +
+                                        '<span class="avatar-title rounded-circle ' + randomColor + '">' + group.firstName.charAt(0).toUpperCase() + '</span>' +
+                                    '</div>'
+                                )
+                            }
+                            
+                        }
+                    } else {
+                        
+                    }
+                },
+            });
+        };
+        getInvitedList();
+        //Timepicker
+        $('.timepicker').timepicker({
+            showInputs: false
+        });
+
+        $("#create_category").on('click', function (e) {
+            $("#createCategoryModal").modal('show');
+        });
+
+        $("#create_category_btn").on('click', function(e) {
+            console.log($("#categoryName").val())
+            var form = $("#createCategoryForm");
+            if (form[0].checkValidity() === false) {
+                e.preventDefault();
+                e.stopPropagation();
+                form[0].classList.add("was-validated");
+                return;
+            }
+
+            $.ajax({
+                url: '/create-category',
+                type: 'POST',
+                data: {
+                    name: $("#categoryName").val()
+                },
+                success: function (result) {
+                    if (result.status == "success") {
+                        var newCateOption = $('<option>', {
+                            value: result.data._id,
+                            text: result.data.name
+                        });
+                        $('#category').append(newCateOption);
+                        $('#category').trigger('change');
+                        $('#categoryName').val('');
+                        $("#createCategoryModal").modal('hide');
+                        
+                    } else {
+                        $.notify({
+                            // options
+                            icon: 'mdi mdi-alert',
+                            title: 'Alert',
+                            message: result.message
+                        }, {
+                            placement: {
+                                align: "right",
+                                from: "top"
+                            },
+                            showProgressbar: true,
+                            timer: 500,
+                            // settings
+                            type: 'danger',
+                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                '<div class="progress" data-notify="progressbar">' +
+                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                '</div>' +
+                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                        });
+                    }
+                },
+            });
+        })
+        $("#deadlineInput").show();
+        $('#deadline').prop('disabled', false);
+        $("#locationInput").hide();
+        $('#location').prop('disabled', true);
+            
+        function updateEvents(newEvents) {
+            // Clear existing events
+            $('#calendar').fullCalendar('removeEvents');
+
+            // Add new events
+            $('#calendar').fullCalendar('addEventSource', newEvents);
+        }
+
+        /* ADDING EVENTS */
+        var currColor = '#B1C2D9';
+        $('.js-event-color').click(function (e) {
+            e.preventDefault();
+            currColor = $(this).css('background-color');
+            $('#add_new_event').css({ 'background-color': currColor, 'border-color': currColor })
+        })
+        $('#add_new_event').click(function (e) {
+            var form = $("#createTaskEventForm");
+            if (form[0].checkValidity() === false) {
+                e.preventDefault();
+                e.stopPropagation();
+                form[0].classList.add("was-validated");
+                return;
+            }
+
+            //Get value and make sure it is not null
+            var val = $('#new_event').val();
+            if (val.length == 0) {
+                return
+            }
+
+            const url = $(".cstm-switch-input").val() === "task" ? '/create-task' : '/create-event'
+
+            const data = $(".cstm-switch-input").val() === "task" ?
+                {
+                    title: $("#new_event").val(),
+                    description: $("#description").val(),
+                    date: $("#date").val(),
+                    hour: $("#time").val(),
+                    deadline: $("#deadline").val(),
+                    attachedFile: $("#eventFileURI").val(),
+                    color: currColor,
+                    category: $('#category').val(),
+                    calendar: '<%= calendar._id %>',
+                    type: $('#type').val(),
+                } : {
+                    title: $("#new_event").val(),
+                    description: $("#description").val(),
+                    date: $("#date").val(),
+                    hour: $("#time").val(),
+                    location: $("#location").val(),
+                    attachedFile: $("#eventFileURI").val(),
+                    color: currColor,
+                    category: $('#category').val(),
+                    calendar: '<%= calendar._id %>',
+                    type: $('#type').val(),
+                }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result.status == "success") {
+                        $('#new_event').val('');
+                        $("#eventFileURI").val('');
+                        eventScheduleData.push(result.tdata);
+                        updateEvents(eventScheduleData);
+                        $.notify({
+                            // options
+                            icon: 'mdi mdi-alert',
+                            title: 'Alert',
+                            message: result.message
+                        }, {
+                            placement: {
+                                align: "right",
+                                from: "top"
+                            },
+                            showProgressbar: true,
+                            timer: 500,
+                            // settings
+                            type: 'success',
+                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                '<div class="progress" data-notify="progressbar">' +
+                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                '</div>' +
+                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                        });
+                    } else {
+                        $.notify({
+                            // options
+                            icon: 'mdi mdi-alert',
+                            title: 'Alert',
+                            message: result.message
+                        }, {
+                            placement: {
+                                align: "right",
+                                from: "top"
+                            },
+                            showProgressbar: true,
+                            timer: 500,
+                            // settings
+                            type: 'danger',
+                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                '<div class="progress" data-notify="progressbar">' +
+                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                '</div>' +
+                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                        });
+                    }
+                },
+            });
+        })
+    </script>
+    <script>
+        $("#uploadFile").on('change', function (e) {
+            let formData = new FormData();
+            const $this = $(this);
+            formData.append("eventFile", this.files[0]);
+            $.ajax({
+                url: '/upload/file',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    $("#eventFileURI").val(data.fileUri)
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        })
+        $('#deadline').on('input', function () {
+            var value = $(this).val();
+            if (value !== '' && !/^\d+$/.test(value)) {
+                $(this).val(value.replace(/\D/g, ''));
+            } else if (value !== '' && parseInt(value) <= 0) {
+                $(this).val('');
+            }
+        });
+        $('.cstm-switch-input').change(function () {
+            if ($(this).is(':checked')) {
+                $(this).val('task');
+                $("#task_event_title").html('Create Task');
+                $("#add_new_event").html('Create Task');
+                $("#deadlineInput").show();
+                $('#deadline').prop('disabled', false);
+                $("#locationInput").hide();
+                $('#location').prop('disabled', true);
+            } else {
+                $(this).val('event');
+                $("#task_event_title").html('Create Event');
+                $("#add_new_event").html('Create Event');
+                $("#deadlineInput").hide();
+                $('#deadline').prop('disabled', true);
+                $("#locationInput").show();
+                $('#location').prop('disabled', false);
+            }
+        });
+    </script>
+    <script>
+        $("#invite_user").on('click', function(e) {
+            $("#inviteModal").modal('show');
+        });
+        $("#invite_btn").on('click', function(e) {
+            var form = $("#inviteForm");
+            if (form[0].checkValidity() === false) {
+                e.preventDefault();
+                e.stopPropagation();
+                form[0].classList.add("was-validated");
+                return;
+            }
+            $("#inviteModal").modal('hide');
+            $.ajax({
+                url: '/invite',
+                type: 'POST',
+                data: {
+                    inviteEmail: $("#inviteEmail").val(),
+                    calendarId: '<%= calendar._id %>'
+                },
+                success: function (result) {
+                    if (result.status == "success") {
+                        $.notify({
+                            // options
+                            icon: 'mdi mdi-alert',
+                            title: 'Alert',
+                            message: result.message
+                        }, {
+                            placement: {
+                                align: "right",
+                                from: "top"
+                            },
+                            showProgressbar: true,
+                            timer: 500,
+                            // settings
+                            type: 'success',
+                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                '<div class="progress" data-notify="progressbar">' +
+                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                '</div>' +
+                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                        });
+                    } else {
+                        $.notify({
+                            // options
+                            icon: 'mdi mdi-alert',
+                            title: 'Alert',
+                            message: result.message
+                        }, {
+                            placement: {
+                                align: "right",
+                                from: "top"
+                            },
+                            showProgressbar: true,
+                            timer: 500,
+                            // settings
+                            type: 'danger',
+                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                '<div class="progress" data-notify="progressbar">' +
+                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                '</div>' +
+                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                        });
+                    }
+                },
+            });
+        })
+    </script>
+</body>
+
+</html>
