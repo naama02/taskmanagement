@@ -53,7 +53,7 @@ const eventListView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     });
-    return res.render('eventList', { 'status': '', curPath: req.path, events: events, moment: moment })
+    return res.render('eventList', { 'status': '', curPath: req.path, events: events, moment: moment, curUserRole: req.user.role })
 }
 
 const eventCreateView = async (req, res) => {
@@ -75,7 +75,7 @@ const eventCreateView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     }).select('-__v');   
-    return res.render('createEvent', { 'status': '', curPath: req.path, projects: projects, categories: categories })
+    return res.render('createEvent', { 'status': '', curPath: req.path, projects: projects, categories: categories, curUserRole: req.user.role })
 }
 
 const eventUpdateView = async (req, res) => {
@@ -104,7 +104,8 @@ const eventUpdateView = async (req, res) => {
         curPath: req.path,
         moment: moment,
         projects: projects, 
-        categories: categories
+        categories: categories,
+        curUserRole: req.user.role
     });
 }
 

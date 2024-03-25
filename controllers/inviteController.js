@@ -2,6 +2,7 @@ const sgMail = require('@sendgrid/mail');
 const User = require('../models/User');
 const Project = require('../models/Project');
 const { encodeInvitationToken, decodeInvitationToken } = require('../utils/util');
+const Notification = require('../models/Notification');
 sgMail.setApiKey(process.env.SENDGRID_APIKEY);
 
 const inviteUser = async (req, res) => {
@@ -65,6 +66,13 @@ const inviteView = async (req, res) => {
                 project.groups = [userExists._id];
             }
             await project.save();
+            const notificationData = {
+                type: 'Invitation',
+                content: "You have received invitation",
+                sender: userId,
+                receiver: userExists._id
+            }
+            await Notification.create(notificationData);
             return res.redirect(`/dashboard`);
         } else {
             return res.redirect(`/register?inviteToken=${inviteToken}`);

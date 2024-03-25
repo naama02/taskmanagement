@@ -17,8 +17,7 @@ const createProject = async (req, res) => {
     try {
         const project = await Project.create(projectData);
         const tprooject = await project.populate('owner');
-        project.ownerFirstname = tprooject.owner.firstName;
-        return res.send({ status: "success", message: "Project successfully created", data: project })
+        return res.send({ status: "success", message: "Project successfully created", data: tprooject })
     } catch (err) {
         console.log(err)
         return res.send({ status: "error", message: err.message })
@@ -35,7 +34,7 @@ const projectView = async (req, res) => {
     }).select('-__v');
 
     const project = await Project.findOne({ _id: req.params.projectId })
-    return res.render('project', { 'status': '', curPath: req.path, categories: categories, project: project, currentUser: req.user._id })
+    return res.render('project', { 'status': '', curPath: req.path, categories: categories, project: project, currentUser: req.user._id, curUserRole: req.user.role })
 }
 
 const projectDelete = async (req, res) => {
