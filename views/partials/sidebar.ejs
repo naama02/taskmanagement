@@ -43,7 +43,6 @@
                     </span>
                 </a>
             </li>
-            <% if (curUserRole == 'admin') { %>
             <li class="menu-item <%= curPath.includes('user') ? 'active' : '' %>">
                 <a href="/users" class="menu-link">
                     <span class="menu-label">
@@ -54,7 +53,6 @@
                     </span>
                 </a>
             </li>
-            <% } %>
             <li class="menu-item <%= curPath.includes('category') ? 'active' : '' %>">
                 <a href="/category" class="menu-link">
                     <span class="menu-label">
@@ -65,7 +63,6 @@
                     </span>
                 </a>
             </li>
-            
         </ul>
 
     </div>

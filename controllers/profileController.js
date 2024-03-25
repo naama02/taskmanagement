@@ -7,7 +7,6 @@ const profileView = async (req, res) => {
         status: '',
         curPath: req.path,
         profile: profile,
-        curUserRole: req.user.role
     })
     
 }

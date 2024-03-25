@@ -71,13 +71,6 @@ const register = async (req, res) => {
                 project.groups = [user._id];
             }
             await project.save();
-            const notificationData = {
-                type: 'Invitation',
-                content: "You have received invitation",
-                sender: project.owner,
-                receiver: user._id
-            }
-            await Notification.create(notificationData);
         }
         
         return res.send({ status: "success", message: "User successfully registered" })

@@ -54,7 +54,7 @@ const taskListView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     });
-    return res.render('taskList', { 'status': '', curPath: req.path, tasks: tasks, moment: moment, curUserRole: req.user.role })
+    return res.render('taskList', { 'status': '', curPath: req.path, tasks: tasks, moment: moment })
 }
 
 const taskList = async (req, res) => {
@@ -89,7 +89,7 @@ const taskCreateView = async (req, res) => {
             _id: 1, firstName: 1, lastName: 1,
         },
     }).select('-__v');
-    return res.render('createTask', { 'status': '', curPath: req.path, projects: projects, categories: categories, curUserRole: req.user.role })
+    return res.render('createTask', { 'status': '', curPath: req.path, projects: projects, categories: categories })
 }
 
 const taskUpdateView = async (req, res) => {
@@ -119,8 +119,7 @@ const taskUpdateView = async (req, res) => {
         curPath: req.path,
         moment: moment,
         projects: projects, 
-        categories: categories,
-        curUserRole: req.user.role
+        categories: categories
     });
 }
 
