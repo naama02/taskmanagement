@@ -22,7 +22,7 @@ const dashboardSchedule = async (req, res) => {
     } else {
         calendarFilter = { calendar: calendar, type: 'group' };
     }
-
+    const googleCalendarEvents = req.session.events ? req.session.events : [];
     const tasks = await Task.find(calendarFilter).populate('calendar').select('-__v');
     const events = await Event.find(calendarFilter).populate('calendar').select('-__v');
     let scheduleEvents = [];
@@ -37,7 +37,6 @@ const dashboardSchedule = async (req, res) => {
             start: moment(task.date).add({ hours: hours, minutes: minutes }).format('YYYY-MM-DDTHH:mm:ss'),
             backgroundColor: task.color,
             borderColor: task.color,
-            deadline: task.deadline,
         })
     }
 
@@ -52,6 +51,17 @@ const dashboardSchedule = async (req, res) => {
             backgroundColor: event.color,
             borderColor: event.color,
             location: event.location,
+        })
+    }
+    for (var calendarEvent of googleCalendarEvents) {
+        scheduleEvents.push({
+            title: calendarEvent.summary,
+            description: calendarEvent.description,
+            start: moment(calendarEvent.start.dateTime).format('YYYY-MM-DDTHH:mm:ss'),
+            end: moment(calendarEvent.end.dateTime).format('YYYY-MM-DDTHH:mm:ss'),
+            backgroundColor: "rgb(38 231 15)",
+            borderColor: "rgb(38 231 15)",
+            sync: true,
         })
     }
 

@@ -16,5 +16,5 @@ const decodeInvitationToken = (token) => {
 
 module.exports = {
     encodeInvitationToken,
-    decodeInvitationToken
+    decodeInvitationToken,
 }

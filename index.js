@@ -5,6 +5,10 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const creds = require("./client_secret.json");
+const { google } = require('googleapis');
+const moment = require('moment');
 
 dotenv.config();
 
@@ -36,6 +40,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 // Middleware
 app.use(cors());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        expires: new Date(Date.now() + 86400000),
+    }
+}));
 
 app.use(cookieParser());
 
@@ -74,10 +87,56 @@ app.use('', calendarRoute);
 app.use('', inviteRoute);
 app.use('', notificationRoute);
 
+const { client_secret, client_id, redirect_uris } = creds.web;
+const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+const scopes = ['https://www.googleapis.com/auth/calendar'];
+let redirectURL;
+
+app.get("/google/redirect", async (req, res) => {
+    if (req.query.redirectURL) {
+        redirectURL = req.query.redirectURL;
+    }
+    if (req.query.code) {
+        const code = req.query.code;
+        try {
+            const { tokens } = await oAuth2Client.getToken(code);
+            oAuth2Client.setCredentials(tokens);
+            const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+            const startDate = moment().startOf('month').format('YYYY-MM-DD');
+            const endDate = moment().endOf('month').format('YYYY-MM-DD');
+            const response = await calendar.events.list({
+                calendarId: 'primary',
+                timeMin: startDate + 'T00:00:00Z',
+                timeMax: endDate + 'T23:59:59Z',
+                maxResults: 20,
+                singleEvents: true,
+                orderBy: 'startTime',
+            });
+            const events = response.data.items;
+            if (events.length) {
+                req.session.events = events;
+            } else {
+                req.session.events = [];
+            }
+            res.redirect(redirectURL);
+        } catch (err) {
+            console.error("Error retrieving or inserting events: ", err);
+            res.status(500).send(err.message);
+        }
+    } else {
+        const url = oAuth2Client.generateAuthUrl({
+            access_type: "offline",
+            scope: scopes,
+            prompt: 'consent' // this may be necessary to ensure refresh token is received
+        });
+        console.log(url);
+        res.redirect(url);
+    }
+});
+
 // Handle 404 errors
 app.use((req, res) => {
     res.status(404).render('error', { message: "404" });
 });
-
 
 app.listen(PORT, () => console.log(`🛺  Task Server UP and Running at ${process.env.SERVER_URL}`));

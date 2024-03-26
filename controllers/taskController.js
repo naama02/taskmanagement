@@ -20,7 +20,6 @@ const createTask = async (req, res) => {
         description: req.body.description,
         date: req.body.date,
         hour: req.body.hour,
-        deadline: req.body.deadline,
         attachedFile: req.body.attachedFile,
         user: req.user._id,
         color: req.body.color,
@@ -40,7 +39,6 @@ const createTask = async (req, res) => {
             start: moment(task.date).add({ hours: hours, minutes: minutes }).format('YYYY-MM-DDTHH:mm:ss'),
             backgroundColor: task.color,
             borderColor: task.color,
-            deadline: task.deadline,
         }
 
         return res.send({ status: "success", message: "Task successfully created", tdata: tData });
@@ -136,7 +134,6 @@ const updateTask = async (req, res) => {
             description: req.body.description,
             date: req.body.date,
             hour: req.body.hour,
-            deadline: req.body.deadline,
             attachedFile: req.body.attachedFile,
             color: req.body.color,
             type: req.body.type,
@@ -149,7 +146,6 @@ const updateTask = async (req, res) => {
             description: req.body.description,
             date: req.body.date,
             hour: req.body.hour,
-            deadline: req.body.deadline,
             color: req.body.color,
             type: req.body.type,
             category: req.body.category,

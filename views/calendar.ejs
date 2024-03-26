@@ -60,6 +60,11 @@
                                     <a href="javascript:void(0);" class="avatar" id="invite_user">
                                         <span class="avatar-title rounded-circle bg-info mdi mdi-plus"></span>
                                     </a>
+                                    <div>
+                                        <a href="javascript:void(0);" class="avatar" id="sync_events">
+                                            <span class="avatar-title rounded-circle bg-success mdi mdi-cloud-sync"></span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -103,10 +108,7 @@
                                     <div class="m-b-10">
                                         <input type="text" id="time" class="timepicker form-control" required />
                                     </div>
-                                    <div class="m-b-10" id="deadlineInput" style="display: none;">
-                                        <input id="deadline" type="text" class="form-control"
-                                            placeholder="Dealine" required />
-                                    </div>
+                    
                                     <div class="m-b-10" id="locationInput">
                                         <input id="location" type="text" class="form-control"
                                             placeholder="Location" required />
@@ -267,6 +269,26 @@
         </div>
     </div>
     <!-- Modal Ends -->
+    <!-- Show Google Event Modal -->
+    <div class="modal fade" id="googleEventShow" tabindex="-1" role="dialog"
+    aria-labelledby="googleEventShowTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="googleEventShowTitle">Google Calendar</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3 id="googleTitle"></h3>
+                    <p id="googleStart"></p>
+                    <p id="googleDescription"></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="../assets/vendor/daterangepicker/daterangepicker.js"></script>
     <script src="../assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="../assets/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
@@ -327,7 +349,14 @@
 
                         },
                         eventClick: function(calEvent, jsEvent, view) {
-                            window.location = calEvent.deadline ? `/edit-task/${calEvent.id}` : `/edit-event/${calEvent.id}`;
+                            if (calEvent.sync) {
+                                $("#googleTitle").html(calEvent.title);
+                                $("#googleStart").html(moment(calEvent.start._d).format("ddd MMM DD YYYY hh:mm A"));
+                                $("#googleDescription").html(calEvent.description);
+                                $("#googleEventShow").modal('show');
+                            } else {
+                                window.location = calEvent.location ? `/edit-event/${calEvent.id}` : `/edit-task/${calEvent.id}`;
+                            }
                         },
                         dayClick: function(info) {
                             const selectedDate = moment(info._d).format("YYYY-MM-DD");
@@ -343,11 +372,11 @@
 
                             // Append the close button to the fc-content element
                             fcContent.append("<span class='closeon' style='margin-left: 10px;'>X</span>");
-                            const eventUrl = event.deadline ? '/task-delete' : '/event-delete'
-                            const eData = event.deadline ? {
-                                taskId: event.id
-                            } : {
+                            const eventUrl = event.location ? '/event-delete' : '/task-delete'
+                            const eData = event.location ? {
                                 eventId: event.id
+                            } : {
+                                taskId: event.id
                             }
                             // Add a click event handler to the close button to remove the event
                             fcContent.find(".closeon").click(function() {
@@ -415,73 +444,76 @@
                             });
                         },
                         eventDrop: function(info) {
-                            const date = moment(info.start.format()).format("YYYY-MM-DD");
-                            const time = moment(info.start.format()).format("hh:mm A");
-                            const data = {
-                                date: date,
-                                hour: time,
+                            if (!info.sync) {
+                                const date = moment(info.start.format()).format("YYYY-MM-DD");
+                                const time = moment(info.start.format()).format("hh:mm A");
+                                const data = {
+                                    date: date,
+                                    hour: time,
+                                }
+                                let url = info.location ? `/update-event-date/${info.id}` : `/update-task-date/${info.id}`
+                                $.ajax({
+                                    url: url,
+                                    type: 'PUT',
+                                    data: data,
+                                    success: function (result) {
+                                        if (result.status == "success") {
+                                            $.notify({
+                                                // options
+                                                icon: 'mdi mdi-heart',
+                                                title: 'Alert',
+                                                message: result.message
+                                            }, {
+                                                placement: {
+                                                    align: "right",
+                                                    from: "top"
+                                                },
+                                                showProgressbar: true,
+                                                timer: 500,
+                                                // settings
+                                                type: 'success',
+                                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                    '<div class="progress" data-notify="progressbar">' +
+                                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                    '</div>' +
+                                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                            });
+                                        } else {
+                                            $.notify({
+                                                // options
+                                                icon: 'mdi mdi-alert',
+                                                title: 'Alert',
+                                                message: result.message
+                                            }, {
+                                                placement: {
+                                                    align: "right",
+                                                    from: "top"
+                                                },
+                                                showProgressbar: true,
+                                                timer: 500,
+                                                // settings
+                                                type: 'danger',
+                                                template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
+                                                    '<div class="progress" data-notify="progressbar">' +
+                                                    '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                    '</div>' +
+                                                    '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
+                                                    '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
+                                                    '<span class="opacity-75" data-notify="message">{2}</span></div>' +
+                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                    ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
+
+                                            });
+                                        }
+                                    },
+                                });
                             }
-                            let url = info.location ? `/update-event-date/${info.id}` : `/update-task-date/${info.id}`
-                            $.ajax({
-                                url: url,
-                                type: 'PUT',
-                                data: data,
-                                success: function (result) {
-                                    if (result.status == "success") {
-                                        $.notify({
-                                            // options
-                                            icon: 'mdi mdi-heart',
-                                            title: 'Alert',
-                                            message: result.message
-                                        }, {
-                                            placement: {
-                                                align: "right",
-                                                from: "top"
-                                            },
-                                            showProgressbar: true,
-                                            timer: 500,
-                                            // settings
-                                            type: 'success',
-                                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
-                                                '<div class="progress" data-notify="progressbar">' +
-                                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-                                                '</div>' +
-                                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
-                                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
-                                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
-                                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
-                                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
-
-                                        });
-                                    } else {
-                                        $.notify({
-                                            // options
-                                            icon: 'mdi mdi-alert',
-                                            title: 'Alert',
-                                            message: result.message
-                                        }, {
-                                            placement: {
-                                                align: "right",
-                                                from: "top"
-                                            },
-                                            showProgressbar: true,
-                                            timer: 500,
-                                            // settings
-                                            type: 'danger',
-                                            template: '<div data-notify="container" class=" bootstrap-notify alert " role="alert">' +
-                                                '<div class="progress" data-notify="progressbar">' +
-                                                '<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-                                                '</div>' +
-                                                '<div class="media "> <div class="avatar m-r-10 avatar-sm"> <div class="avatar-title bg-{0} rounded-circle"><span data-notify="icon"></span></div> </div>' +
-                                                '<div class="media-body"><div class="font-secondary" data-notify="title">{1}</div> ' +
-                                                '<span class="opacity-75" data-notify="message">{2}</span></div>' +
-                                                '<a href="{3}" target="{4}" data-notify="url"></a>' +
-                                                ' <button type="button" aria-hidden="true" class="close" data-notify="dismiss"><span>x</span></button></div></div>'
-
-                                        });
-                                    }
-                                },
-                            });
+                            
                         }
                     });
                 },
@@ -592,8 +624,7 @@
                 },
             });
         })
-        $("#deadlineInput").show();
-        $('#deadline').prop('disabled', false);
+
         $("#locationInput").hide();
         $('#location').prop('disabled', true);
             
@@ -635,7 +666,6 @@
                     description: $("#description").val(),
                     date: $("#date").val(),
                     hour: $("#time").val(),
-                    deadline: $("#deadline").val(),
                     attachedFile: $("#eventFileURI").val(),
                     color: currColor,
                     category: $('#category').val(),
@@ -737,29 +767,17 @@
                 processData: false
             });
         })
-        $('#deadline').on('input', function () {
-            var value = $(this).val();
-            if (value !== '' && !/^\d+$/.test(value)) {
-                $(this).val(value.replace(/\D/g, ''));
-            } else if (value !== '' && parseInt(value) <= 0) {
-                $(this).val('');
-            }
-        });
         $('.cstm-switch-input').change(function () {
             if ($(this).is(':checked')) {
                 $(this).val('task');
                 $("#task_event_title").html('Create Task');
                 $("#add_new_event").html('Create Task');
-                $("#deadlineInput").show();
-                $('#deadline').prop('disabled', false);
                 $("#locationInput").hide();
                 $('#location').prop('disabled', true);
             } else {
                 $(this).val('event');
                 $("#task_event_title").html('Create Event');
                 $("#add_new_event").html('Create Event');
-                $("#deadlineInput").hide();
-                $('#deadline').prop('disabled', true);
                 $("#locationInput").show();
                 $('#location').prop('disabled', false);
             }
@@ -769,6 +787,12 @@
         $("#invite_user").on('click', function(e) {
             $("#inviteModal").modal('show');
         });
+
+        $("#sync_events").on('click', function(e) {
+            const orignialURL = window.location.href;
+            window.location.href = `http://localhost:3009/google/redirect?redirectURL=${orignialURL}`;
+        });
+
         $("#invite_btn").on('click', function(e) {
             var form = $("#inviteForm");
             if (form[0].checkValidity() === false) {
