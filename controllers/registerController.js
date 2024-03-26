@@ -3,6 +3,7 @@ const { registerValidation } = require("../utils/validation");
 const User = require('../models/User');
 const { decodeInvitationToken } = require('../utils/util');
 const Calendar = require('../models/Calendar');
+const Notification = require('../models/Notification');
 
 const saltLength = 10;
 
